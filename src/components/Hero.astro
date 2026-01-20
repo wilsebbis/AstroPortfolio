@@ -7,18 +7,15 @@ import Section from "./Section.astro";
         <div class="hero-background"></div>
 
         <h1 class="hero-title" aria-label="Wil Bishop">
-            <span class="text-wrapper">WIL</span>
-            <span class="text-wrapper text-highlight">
-                BISH<span class="image-container">
-                    <img
-                        src="/profile.jpg"
-                        alt=""
-                        class="profile-image"
-                        fetchpriority="high"
-                        loading="eager"
-                    />
-                </span>P
-            </span>
+            WIL BISH<span class="image-container"
+                ><img
+                    src="/profile.png"
+                    alt=""
+                    class="profile-image"
+                    fetchpriority="high"
+                    loading="eager"
+                /></span
+            >P
         </h1>
 
         <div class="typing-container">
@@ -87,15 +84,13 @@ import Section from "./Section.astro";
 <style>
     .hero-section {
         min-height: 100vh;
-        width: 100vw;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Center content vertically */
+        justify-content: center;
         align-items: center;
-        padding: var(--space-8);
-        padding-top: 80px; /* Clearance for fixed navbar */
+        padding: var(--space-24) var(--space-8); /* Increased top/bottom padding for breathing room */
         position: relative;
-        margin-left: calc(-50vw + 50%);
     }
 
     .hero-container {
@@ -105,55 +100,46 @@ import Section from "./Section.astro";
         flex-direction: column;
         align-items: center;
         width: 100%;
-        max-width: 1200px;
     }
 
     .hero-title {
         font-family: var(--font-display);
-        font-size: clamp(3rem, 10vw, 7rem); /* Reduced from 15vw/10rem */
+        font-size: clamp(
+            3.5rem,
+            12vw,
+            12rem
+        ); /* Increased cap from 8.5rem to 12rem */
         font-weight: 800;
-        line-height: 0.9;
-        margin-bottom: var(--space-4); /* Tightened from space-8 */
+        line-height: 1.1;
+        margin-bottom: var(--space-4);
         letter-spacing: -0.04em;
-        display: flex;
-        flex-direction: column; /* Stack by default (Mobile) */
-        align-items: center;
-        justify-content: center;
         text-align: center;
         width: 100%;
-        gap: 0;
+        display: block;
+        white-space: nowrap; /* Keep name on one line for the "O" replacement effect */
     }
 
-    @media (min-width: 768px) {
+    /* Mobile scale-down to ensure it stays on one line */
+    @media (max-width: 480px) {
         .hero-title {
-            flex-direction: row; /* Inline on Desktop */
-            gap: 0.25em;
-            line-height: 1;
+            font-size: clamp(2.5rem, 15vw, 3.5rem);
+            white-space: normal; /* Allow wrap if extremely narrow */
         }
-    }
-
-    .text-wrapper {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .text-highlight {
-        vertical-align: middle;
     }
 
     .image-container {
         display: inline-block;
-        width: 0.8em;
-        height: 0.8em;
+        width: 0.76em; /* Slightly smaller to match cap-height precisely */
+        height: 0.76em;
         margin: 0 0.05em;
         border-radius: 50%;
         overflow: hidden;
         vertical-align: middle;
         position: relative;
+        top: -0.08em; /* Increased nudge to stay off the baseline */
         flex-shrink: 0;
-        background-color: var(--bg-secondary);
-        border: 2px solid rgba(255, 255, 255, 0.1);
+        background-color: #ffffff; /* Matches letter color to fill PNG transparency */
+        border: none; /* Removed the ring */
         animation: fade-in 1s ease-out forwards 0.5s;
         opacity: 0;
     }
