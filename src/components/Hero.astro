@@ -1,21 +1,24 @@
 ---
 import Section from "./Section.astro";
+import { Image } from "astro:assets";
+import profileImage from "../assets/profile.png";
 ---
 
 <Section class="hero-section">
     <div class="hero-container">
         <div class="hero-background"></div>
 
-        <h1 class="hero-title" aria-label="Wil Bishop">
-            WIL BISH<span class="image-container"
-                ><img
-                    src="/profile.png"
+        <h1 class="hero-title">
+            Wil Bish<span class="image-container"
+                ><span class="sr-only">o</span><Image
+                    src={profileImage}
                     alt=""
                     class="profile-image"
-                    fetchpriority="high"
+                    format="webp"
                     loading="eager"
+                    fetchpriority="high"
                 /></span
-            >P
+            >p
         </h1>
 
         <div class="typing-container">
@@ -117,6 +120,7 @@ import Section from "./Section.astro";
         width: 100%;
         display: block;
         white-space: nowrap; /* Keep name on one line for the "O" replacement effect */
+        text-transform: uppercase;
     }
 
     /* Mobile scale-down to ensure it stays on one line */
@@ -129,19 +133,30 @@ import Section from "./Section.astro";
 
     .image-container {
         display: inline-block;
-        width: 0.76em; /* Slightly smaller to match cap-height precisely */
+        width: 0.76em; /* Reduced size to match cap height of letters */
         height: 0.76em;
-        margin: 0 0.05em;
+        margin: 0 0.02em;
         border-radius: 50%;
         overflow: hidden;
         vertical-align: middle;
         position: relative;
-        top: -0.08em; /* Increased nudge to stay off the baseline */
+        top: -0.08em; /* Adjusted to align with cap height precisely */
         flex-shrink: 0;
         background-color: #ffffff; /* Matches letter color to fill PNG transparency */
         border: none; /* Removed the ring */
-        animation: fade-in 1s ease-out forwards 0.5s;
-        opacity: 0;
+        opacity: 1;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
     }
 
     .profile-image {
@@ -149,10 +164,8 @@ import Section from "./Section.astro";
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center;
-        transform: scale(
-            1.1
-        ); /* Subtle scale to ensure the image fully covers the circular frame */
+        object-position: center 60%; /* Shifted head up to show more shirt */
+        transform: none; /* Removed scale to show more of the original image context */
     }
 
     .typing-container {
@@ -210,12 +223,6 @@ import Section from "./Section.astro";
         }
         50% {
             opacity: 0;
-        }
-    }
-
-    @keyframes fade-in {
-        to {
-            opacity: 1;
         }
     }
 </style>
