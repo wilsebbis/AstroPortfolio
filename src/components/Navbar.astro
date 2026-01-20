@@ -1,10 +1,12 @@
 ---
+
 ---
 
 <nav id="navbar">
-    <a href="#" class="brand">
-        WB
-    </a>
+    <div class="scroll-progress-container">
+        <div id="scroll-progress-bar" class="scroll-progress-bar"></div>
+    </div>
+    <a href="#" class="brand"> WB </a>
     <div class="nav-links">
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
@@ -13,37 +15,49 @@
 </nav>
 
 <script>
-    const nav = document.getElementById('navbar');
+    const nav = document.getElementById("navbar");
+    const progressBar = document.getElementById("scroll-progress-bar");
     let lastScrollY = window.scrollY;
     let hidden = false;
 
     const handleScroll = () => {
         const currentScrollY = window.scrollY;
-        
+
+        // Progress bar calculation
+        const winScroll =
+            document.body.scrollTop || document.documentElement.scrollTop;
+        const height =
+            document.documentElement.scrollHeight -
+            document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        if (progressBar) {
+            progressBar.style.width = scrolled + "%";
+        }
+
         // Determine header visibility (hide on scroll down, show on scroll up)
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        if (nav && currentScrollY > lastScrollY && currentScrollY > 100) {
             if (!hidden) {
-                nav.style.transform = 'translateY(-100%)';
+                nav.style.transform = "translateY(-100%)";
                 hidden = true;
             }
-        } else {
+        } else if (nav) {
             if (hidden) {
-                nav.style.transform = 'translateY(0)';
+                nav.style.transform = "translateY(0)";
                 hidden = false;
             }
         }
 
         // Add background/blur when scrolled
-        if (currentScrollY > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
+        if (nav && currentScrollY > 50) {
+            nav.classList.add("scrolled");
+        } else if (nav) {
+            nav.classList.remove("scrolled");
         }
 
         lastScrollY = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 </script>
 
 <style>
@@ -58,7 +72,10 @@
         justify-content: space-between;
         align-items: center;
         background: transparent;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, backdrop-filter 0.3s ease;
+        transition:
+            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            background 0.3s ease,
+            backdrop-filter 0.3s ease;
     }
 
     nav.scrolled {
@@ -81,11 +98,19 @@
         font-family: var(--font-display);
         font-size: 1.5rem;
         font-weight: 700;
-        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        background: linear-gradient(
+            135deg,
+            var(--accent-primary),
+            var(--accent-secondary)
+        );
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
         text-decoration: none;
+    }
+
+    .brand:hover {
+        transform: scale(1.05);
     }
 
     .nav-links {
@@ -104,5 +129,29 @@
 
     .nav-links a:hover {
         color: var(--text-primary);
+    }
+
+    /* Scroll Progress Bar */
+    .scroll-progress-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.05);
+        z-index: 1001;
+    }
+
+    .scroll-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+            90deg,
+            var(--accent-primary),
+            var(--accent-secondary),
+            var(--accent-tertiary)
+        );
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        transition: width 0.1s ease-out;
     }
 </style>
