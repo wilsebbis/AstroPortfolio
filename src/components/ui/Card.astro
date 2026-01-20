@@ -1,0 +1,50 @@
+---
+interface Props {
+	class?: string;
+    glass?: boolean;
+    hover?: boolean;
+    [key: string]: any;
+}
+
+const { class: className, glass = true, hover = true, ...props } = Astro.props;
+---
+
+<div class:list={['card', { 'glass-card': glass, 'card-hover': hover }, className]} {...props}>
+    <slot />
+</div>
+
+<style>
+    .card {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        position: relative;
+        background: var(--bg-secondary);
+    }
+
+    .glass-card {
+        background: rgba(19, 19, 31, 0.6);
+        /* backdrop-filter is handled in global.css media queries to respect mobile preferences */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .card-hover {
+        transition: transform 0.3s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Mobile override for performance (safeguard) */
+    @media (max-width: 768px) {
+        .glass-card {
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            background: rgba(19, 19, 31, 0.95);
+        }
+    }
+</style>

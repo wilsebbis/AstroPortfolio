@@ -1,0 +1,84 @@
+---
+interface Props {
+	href?: string;
+	variant?: 'primary' | 'secondary' | 'ghost';
+	size?: 'sm' | 'md' | 'lg';
+	class?: string;
+    download?: boolean;
+    [key: string]: any;
+}
+
+const { href, variant = 'primary', size = 'md', class: className, download, ...props } = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag 
+    href={href} 
+    class:list={['btn', `btn-${variant}`, `btn-${size}`, className]} 
+    download={download}
+    {...props}
+>
+    <slot />
+</Tag>
+
+<style>
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        text-decoration: none;
+        font-family: var(--font-sans);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+    }
+
+    /* Variants */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        color: #fff;
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+    }
+
+    /* Sizes */
+    .btn-sm {
+        padding: var(--space-1) var(--space-3);
+        font-size: 0.875rem;
+    }
+
+    .btn-md {
+        padding: var(--space-2) var(--space-4);
+        font-size: 1rem;
+    }
+
+    .btn-lg {
+        padding: var(--space-3) var(--space-6);
+        font-size: 1.125rem;
+    }
+</style>

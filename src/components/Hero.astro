@@ -1,0 +1,175 @@
+---
+import Section from './Section.astro';
+---
+
+<Section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-background"></div>
+        
+        <h1 class="hero-title">
+            WIL 
+            <span class="profile-container">
+                BISHOP
+                <div class="profile-image-wrapper">
+                    <img 
+                        src="/profile.jpg" 
+                        alt="Wil" 
+                        class="profile-image"
+                        fetchpriority="high"
+                        loading="eager"
+                    />
+                </div>
+            </span>
+        </h1>
+
+        <div class="typing-container">
+            I am a <span class="gradient-text" id="typing-text"></span><span class="cursor"></span>
+        </div>
+    </div>
+</Section>
+
+<script>
+    const words = ["Computer Scientist", "AI Researcher", "Machine Learning Engineer"];
+    const typingText = document.getElementById('typing-text');
+    
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    
+    const typingSpeed = 80;
+    const deletingSpeed = 40;
+    const pauseTime = 1500;
+    const initialDelay = 100;
+
+    let timeoutId;
+
+    function type() {
+        const currentWord = words[wordIndex];
+        
+        if (isDeleting) {
+            charIndex--;
+        } else {
+            charIndex++;
+        }
+
+        if (typingText) {
+            typingText.textContent = currentWord.substring(0, charIndex);
+        }
+
+        let nextSpeed = isDeleting ? deletingSpeed : typingSpeed;
+
+        if (!isDeleting && charIndex === currentWord.length) {
+            nextSpeed = pauseTime;
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+            nextSpeed = 500;
+        }
+
+        timeoutId = setTimeout(type, nextSpeed);
+    }
+
+    // Start with initial delay
+    setTimeout(type, initialDelay);
+
+    // Cleanup (though standard Astro pages don't usually unmount scripts like React)
+    // If navigation uses View Transitions, we might need logic here. 
+    // For now, simpler is better.
+</script>
+
+<style>
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: var(--space-8);
+        position: relative;
+    }
+
+    .hero-container {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 10vw, 8rem);
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: var(--space-4);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.2em;
+        text-align: center;
+    }
+
+    .profile-container {
+        position: relative;
+        display: inline-block;
+        color: transparent;
+        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-image-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 100px;
+        z-index: -1;
+        opacity: 0;
+        animation: fade-in 1s ease-out forwards 0.5s;
+    }
+
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 20%;
+        transform: scale(1.35);
+    }
+
+    .typing-container {
+        font-family: var(--font-display);
+        font-size: clamp(1.2rem, 4vw, 2rem);
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1em;
+        background: var(--accent-primary);
+        margin-left: 2px;
+        vertical-align: middle;
+        animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    @keyframes fade-in {
+        to { opacity: 1; }
+    }
+</style>
