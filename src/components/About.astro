@@ -1,27 +1,44 @@
 ---
-import Section from './Section.astro';
-import Card from './ui/Card.astro';
+import Section from "./Section.astro";
+import Card from "./ui/Card.astro";
 ---
 
 <Section id="about">
     <div class="about-container">
         <div class="bio">
             <p>
-                I am a passionate Computer Science student with a deep focus on Artificial Intelligence and Machine Learning.
-                My journey involves exploring the depths of neural networks, natural language processing, and computer vision.
+                I am a passionate Computer Science student with a deep focus on
+                Artificial Intelligence and Machine Learning. My journey
+                involves exploring the depths of neural networks, natural
+                language processing, and computer vision.
             </p>
             <p>
-                I'm constantly building projects that push the boundaries of what's possible with code and data.
-                Currently exploring generative models and reinforcement learning.
+                I'm constantly building projects that push the boundaries of
+                what's possible with code and data. Currently exploring
+                generative models and reinforcement learning.
             </p>
         </div>
 
         <Card class="tech-stack-card" glass={true}>
             <h3>Tech Stack</h3>
             <div class="tags">
-                {['Python', 'PyTorch', 'TensorFlow', 'React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS'].map((tech) => (
-                    <span class="tag">{tech}</span>
-                ))}
+                {
+                    [
+                        "Python",
+                        "PyTorch",
+                        "TensorFlow",
+                        "React",
+                        "TypeScript",
+                        "Node.js",
+                        "PostgreSQL",
+                        "Docker",
+                        "AWS",
+                    ].map((tech) => (
+                        <span class="tag" translate="no">
+                            {tech}
+                        </span>
+                    ))
+                }
             </div>
         </Card>
     </div>

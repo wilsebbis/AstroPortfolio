@@ -18,8 +18,9 @@ const metrics = [
     <h2>Problem & Constraints</h2>
     <p>
         Radiologists miss up to 30% of small lung nodules in CT scans due to
-        fatigue. While standard segmentation networks (like U-Net) exist, they
-        suffer from
+        fatigue. While standard segmentation networks (like <code translate="no"
+            >U-Net</code
+        >) exist, they suffer from
         <strong>overconfidence on out-of-distribution data</strong>, leading to
         high false positive rates (flagging healthy tissue as cancer). Clinical
         adoption requires minimal false alarms (< 2 per scan) while maintaining
@@ -33,9 +34,10 @@ const metrics = [
     </p>
     <ul>
         <li>
-            <strong>Bayesian U-Net:</strong> Implemented Monte Carlo Dropout active
-            during inference time. This allows the model to output a predictive distribution
-            rather than a single value.
+            <strong><code translate="no">Bayesian U-Net</code>:</strong> Implemented
+            <code translate="no">Monte Carlo Dropout</code> active during inference
+            time. This allows the model to output a predictive distribution rather
+            than a single value.
         </li>
         <li>
             <strong>Uncertainty Filtering:</strong> Calculated pixel-wise variance
@@ -46,14 +48,14 @@ const metrics = [
         <li>
             <strong>Data Augmentation:</strong> Applied elastic deformations and 3D
             rotations to simulate anatomical variations and handle limited labeled
-            training data (LUNA16 dataset).
+            training data (<code translate="no">LUNA16</code> dataset).
         </li>
     </ul>
 
     <h2>Baselines & Evaluation</h2>
     <p>
-        Tested on the independent LUNA16 test set using strict patient-level
-        separation (no leakage).
+        Tested on the independent <code translate="no">LUNA16</code> test set using
+        strict patient-level separation (no leakage).
     </p>
 
     <div class="overflow-x-auto">
@@ -68,20 +70,22 @@ const metrics = [
             </thead>
             <tbody>
                 <tr class="border-b border-white/5">
-                    <td class="py-2 px-4">Standard U-Net</td>
+                    <td class="py-2 px-4"><code translate="no">U-Net</code></td>
                     <td class="py-2 px-4">0.89</td>
                     <td class="py-2 px-4">94.0%</td>
                     <td class="py-2 px-4">4.0</td>
                 </tr>
                 <tr class="border-b border-white/5">
-                    <td class="py-2 px-4">ResNet-50 FCN</td>
+                    <td class="py-2 px-4"
+                        ><code translate="no">ResNet-50 FCN</code></td
+                    >
                     <td class="py-2 px-4">0.90</td>
                     <td class="py-2 px-4">95.2%</td>
                     <td class="py-2 px-4">3.5</td>
                 </tr>
                 <tr class="bg-accent-primary/5">
                     <td class="py-2 px-4 font-semibold text-accent-primary"
-                        >Bayesian U-Net (Ours)</td
+                        ><code translate="no">Bayesian U-Net</code> (Ours)</td
                     >
                     <td class="py-2 px-4 font-semibold text-accent-primary"
                         >0.92</td
@@ -115,18 +119,22 @@ const metrics = [
     <details open>
         <summary>Engineering Notes: Data Pipeline</summary>
         <p>
-            Preprocessing 3D DICOM images is a bottleneck. I implemented a
-            DALI-based GPU-accelerated preprocessing pipeline (resampling to 1mm
-            isotropic spacing, normalization) which sped up training epoch time
-            by 4x compared to CPU-based NumPy preprocessing.
+            Preprocessing 3D <code translate="no">DICOM</code> images is a bottleneck.
+            I implemented a
+            <code translate="no">DALI</code>-based GPU-accelerated preprocessing
+            pipeline (resampling to 1mm isotropic spacing, normalization) which
+            sped up training epoch time by 4x compared to CPU-based <code
+                translate="no">NumPy</code
+            > preprocessing.
         </p>
     </details>
 
     <h2>What I'd Do Next</h2>
     <ul>
         <li>
-            Explore 3D U-Net architectures (V-Net) for better volumetric
-            context.
+            Explore 3D <code translate="no">U-Net</code> architectures (<code
+                translate="no">V-Net</code
+            >) for better volumetric context.
         </li>
         <li>
             Implement Active Learning loop to query radiologists only for

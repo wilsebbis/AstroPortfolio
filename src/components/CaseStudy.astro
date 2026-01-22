@@ -47,11 +47,11 @@ import Section from "./Section.astro";
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >MLflow Setup</span
+                            translate="no">MLflow Setup</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >DVC Init</span
+                            translate="no">DVC Init</span
                         >
                     </div>
                 </div>
@@ -73,11 +73,11 @@ import Section from "./Section.astro";
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >Ray Tune</span
+                            translate="no">Ray Tune</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >AWS Spot</span
+                            translate="no">AWS Spot</span
                         >
                     </div>
                 </div>
@@ -99,11 +99,11 @@ import Section from "./Section.astro";
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >Docker</span
+                            translate="no">Docker</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >FastAPI</span
+                            translate="no">FastAPI</span
                         >
                     </div>
                 </div>
@@ -145,11 +145,12 @@ import Section from "./Section.astro";
                                 >vs</span
                             >
                             <span class="text-text-secondary">
-                                <strong class="text-white"
+                                <strong class="text-white" translate="no"
                                     >Postgres over Vector DB:</strong
                                 >
-                                Chose pgvector for simplicity. Dedicated vector DB
-                                added unnecessary ops overhead for &lt;1M vectors.
+                                Chose <code translate="no">pgvector</code> for simplicity.
+                                Dedicated vector DB added unnecessary ops overhead
+                                for &lt;1M vectors.
                             </span>
                         </li>
                         <li class="flex items-start gap-3 text-sm">

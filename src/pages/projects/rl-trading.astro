@@ -33,19 +33,24 @@ const metrics = [
     </p>
     <ul>
         <li>
-            <strong>Algorithm:</strong> Proximal Policy Optimization (PPO) with a
-            custom reward function that penalizes volatility (Sortino Ratio optimization).
+            <strong>Algorithm:</strong>
+            <code translate="no">Proximal Policy Optimization (PPO)</code> with a
+            custom reward function that penalizes volatility (<code
+                translate="no">Sortino Ratio</code
+            > optimization).
         </li>
         <li>
             <strong>Observation Space:</strong> 50ms order book snapshots (L2 data),
-            recent trade flow, and technical indicators (RSI, MACD) normalized via
-            z-score.
+            recent trade flow, and technical indicators (<code translate="no"
+                >RSI</code
+            >, <code translate="no">MACD</code>) normalized via z-score.
         </li>
         <li>
             <strong>Simulation Environment:</strong> Built a custom high-performance
-            backtester using <code>VectorBT</code> (numba-accelerated) to simulate
-            years of L2 data in minutes. Included realistic latency (20ms) and fee
-            models (5bps).
+            backtester using <code translate="no">VectorBT</code> (<code
+                translate="no">numba</code
+            >-accelerated) to simulate years of L2 data in minutes. Included
+            realistic latency (20ms) and fee models (5bps).
         </li>
     </ul>
 
@@ -80,7 +85,7 @@ const metrics = [
                 </tr>
                 <tr class="bg-accent-primary/5">
                     <td class="py-2 px-4 font-semibold text-accent-primary"
-                        >PPO Agent (Our Method)</td
+                        ><code translate="no">PPO</code> Agent (Our Method)</td
                     >
                     <td class="py-2 px-4 font-semibold text-accent-primary"
                         >+177%</td
@@ -116,36 +121,42 @@ const metrics = [
     <details open>
         <summary>Engineering Notes: Infrastructure Choices</summary>
         <p>
-            Switched from standard Python <code>multiprocessing</code> to <strong
-                >Ray</strong
+            Switched from standard <code translate="no">Python</code>
+            <code translate="no">multiprocessing</code> to <strong
+                ><code translate="no">Ray</code></strong
             > for parallel environment rollouts. This scaled training from 4 cores
-            to a 64-core AWS c5.18xlarge spot instance, reducing training time from
-            3 days to 4 hours. Used Redis as a high-throughput feature store for live
-            inference.
+            to a 64-core <code translate="no">AWS c5.18xlarge</code> spot instance,
+            reducing training time from 3 days to 4 hours. Used <code
+                translate="no">Redis</code
+            > as a high-throughput feature store for live inference.
         </p>
     </details>
 
     <h2>Productionization</h2>
     <ul>
         <li>
-            <strong>Live execution:</strong> Python asyncio service connecting to
-            Exchange Websockets.
+            <strong>Live execution:</strong>
+            <code translate="no">Python asyncio</code> service connecting to Exchange
+            <code translate="no">Websockets</code>.
         </li>
         <li>
             <strong>Latency:</strong> End-to-end tick-to-trade latency optimized to
             ~12ms (in same AWS region).
         </li>
         <li>
-            <strong>Monitoring:</strong> Prometheus/Grafana dashboard tracking PnL,
-            open exposure, and API rate limits in real-time.
+            <strong>Monitoring:</strong>
+            <code translate="no">Prometheus</code>/<code translate="no"
+                >Grafana</code
+            > dashboard tracking PnL, open exposure, and API rate limits in real-time.
         </li>
     </ul>
 
     <h2>What I'd Do Next</h2>
     <ul>
         <li>
-            Implement Transformer-based policy networks (Decision Transformer)
-            for longer-context reasoning.
+            Implement <code translate="no">Transformer</code>-based policy
+            networks (<code translate="no">Decision Transformer</code>) for
+            longer-context reasoning.
         </li>
         <li>Add sentiment analysis features from news APIs.</li>
     </ul>

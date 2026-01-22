@@ -1,0 +1,24 @@
+---
+/**
+ * NoTranslate Component
+ * Wraps content with translate="no" to prevent browser translation of technical terms,
+ * brand names, programming languages, etc.
+ *
+ * Usage:
+ *   <NoTranslate>PyTorch</NoTranslate>
+ *   <NoTranslate code>SvelteKit</NoTranslate> (wraps in <code> tag for semantic markup)
+ */
+interface Props {
+    /** Use semantic <code> tag instead of <span> */
+    code?: boolean;
+    /** Additional CSS classes */
+    class?: string;
+}
+
+const { code = false, class: className = "" } = Astro.props;
+const Tag = code ? "code" : "span";
+---
+
+<Tag translate="no" class={className}>
+    <slot />
+</Tag>

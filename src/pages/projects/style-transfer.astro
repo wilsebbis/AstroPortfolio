@@ -18,12 +18,14 @@ const metrics = [
 >
     <h2>Problem & Constraints</h2>
     <p>
-        Neural style transfer typically requires heavy GPU compute (VGG-19
-        backbone), making it infeasible for real-time applications on mobile
-        devices. The goal was to enable
+        Neural style transfer typically requires heavy GPU compute (<code
+            translate="no">VGG-19</code
+        >
+        backbone), making it infeasible for real-time applications on mobile devices.
+        The goal was to enable
         <strong>real-time video stylization (24fps+)</strong> on mid-range Android
-        devices (Snapdragon 855 class) while maintaining perceptual quality closest
-        to the original optimization-based method.
+        devices (<code translate="no">Snapdragon 855</code> class) while maintaining
+        perceptual quality closest to the original optimization-based method.
     </p>
 
     <h2>Approach</h2>
@@ -33,18 +35,25 @@ const metrics = [
     </p>
     <ul>
         <li>
-            <strong>Architecture Distillation:</strong> Distilled a heavy VGG-19 encoder
-            into a lightweight MobileNetV3-Small backbone using perceptual loss.
+            <strong>Architecture Distillation:</strong> Distilled a heavy <code
+                translate="no">VGG-19</code
+            > encoder into a lightweight <code translate="no"
+                >MobileNetV3-Small</code
+            > backbone using perceptual loss.
         </li>
         <li>
-            <strong>Quantization-Aware Training (QAT):</strong> Fine-tuned the decoder
-            with quantization-aware training to minimize accuracy drop when converting
-            to INT8.
+            <strong
+                >Quantization-Aware Training (<code translate="no">QAT</code
+                >):</strong
+            > Fine-tuned the decoder with quantization-aware training to minimize
+            accuracy drop when converting to <code translate="no">INT8</code>.
         </li>
         <li>
-            <strong>Inference Engine Migration:</strong> Ported the PyTorch model
-            to NCNN (Tencent's high-performance neural network framework) to leverage
-            Vulkan compute shaders on Android.
+            <strong>Inference Engine Migration:</strong> Ported the <code
+                translate="no">PyTorch</code
+            > model to <code translate="no">NCNN</code> (Tencent's high-performance
+            neural network framework) to leverage
+            <code translate="no">Vulkan</code> compute shaders on Android.
         </li>
     </ul>
 
@@ -63,20 +72,28 @@ const metrics = [
             </thead>
             <tbody>
                 <tr class="border-b border-white/5">
-                    <td class="py-2 px-4">Original VGG-19 (PyTorch Mobile)</td>
+                    <td class="py-2 px-4"
+                        >Original <code translate="no">VGG-19</code> (<code
+                            translate="no">PyTorch Mobile</code
+                        >)</td
+                    >
                     <td class="py-2 px-4">840ms</td>
                     <td class="py-2 px-4">500MB+</td>
                     <td class="py-2 px-4">0.0 (Ref)</td>
                 </tr>
                 <tr class="border-b border-white/5">
-                    <td class="py-2 px-4">Pruned VGG-16</td>
+                    <td class="py-2 px-4"
+                        >Pruned <code translate="no">VGG-16</code></td
+                    >
                     <td class="py-2 px-4">320ms</td>
                     <td class="py-2 px-4">120MB</td>
                     <td class="py-2 px-4">0.04</td>
                 </tr>
                 <tr class="bg-accent-primary/5">
                     <td class="py-2 px-4 font-semibold text-accent-primary"
-                        >Our Method (NCNN + INT8)</td
+                        >Our Method (<code translate="no">NCNN</code> + <code
+                            translate="no">INT8</code
+                        >)</td
                     >
                     <td class="py-2 px-4 font-semibold text-accent-primary"
                         >41ms</td
@@ -101,9 +118,10 @@ const metrics = [
             using optical flow warping during training.
         </li>
         <li>
-            <strong>Color Drift:</strong> INT8 quantization caused color shifts in
-            low-contrast regions. Mitigated by using a separate scale factor for style
-            features in the AdaIN layer.
+            <strong>Color Drift:</strong>
+            <code translate="no">INT8</code> quantization caused color shifts in low-contrast
+            regions. Mitigated by using a separate scale factor for style features
+            in the <code translate="no">AdaIN</code> layer.
         </li>
         <li>
             <strong>Thermal Throttling:</strong> Sustained 60fps usage caused device
@@ -115,9 +133,12 @@ const metrics = [
     <details open>
         <summary>Engineering Notes: Profiling Bottlenecks</summary>
         <p>
-            Profiling with Android Studio CPU Profiler revealed that 40% of
-            inference time was spent on memory copying between texture and
-            buffer memory. Switching to zero-copy Vulkan textures in NCNN
+            Profiling with <code translate="no"
+                >Android Studio CPU Profiler</code
+            > revealed that 40% of inference time was spent on memory copying between
+            texture and buffer memory. Switching to zero-copy <code
+                translate="no">Vulkan</code
+            > textures in <code translate="no">NCNN</code>
             reduced total end-to-end latency by ~15ms.
         </p>
     </details>
@@ -125,7 +146,9 @@ const metrics = [
     <h2>Productionization</h2>
     <p>
         The model is served on-device (offline availability). A separate "Model
-        Delivery Service" (Python/FastAPI) handles OTA updates:
+        Delivery Service" (<code translate="no">Python</code>/<code
+            translate="no">FastAPI</code
+        >) handles OTA updates:
     </p>
     <ul>
         <li>
@@ -134,7 +157,7 @@ const metrics = [
         </li>
         <li>
             <strong>Monitoring:</strong> Telemetry tracks P99 latency and crash rates
-            (Sentry).
+            (<code translate="no">Sentry</code>).
         </li>
         <li>
             <strong>Rollback:</strong> Client app keeps the previous stable model
@@ -149,6 +172,8 @@ const metrics = [
             styles).
         </li>
         <li>Explore 4-bit quantization for further size reduction.</li>
-        <li>Port to WebGPU for browser-based support.</li>
+        <li>
+            Port to <code translate="no">WebGPU</code> for browser-based support.
+        </li>
     </ul>
 </ProjectDetailLayout>
