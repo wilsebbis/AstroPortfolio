@@ -1,0 +1,174 @@
+---
+import Layout from "./Layout.astro";
+import Section from "../components/Section.astro";
+
+interface Props {
+    title: string;
+    description: string;
+    metrics: { label: string; value: string }[];
+    github?: string;
+    demo?: string;
+}
+
+const { title, description, metrics, github, demo } = Astro.props;
+---
+
+<Layout title={`${title} | Wil Bishop`}>
+    <div class="fixed top-0 left-0 w-full z-50 p-6">
+        <a
+            href="/#projects"
+            class="glass-card px-4 py-2 flex items-center gap-2 text-sm font-semibold hover:bg-white/5 transition-colors w-fit"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg
+            >
+            Back to Portfolio
+        </a>
+    </div>
+
+    <main class="pt-24 pb-32 px-6">
+        <Section class="max-w-4xl mx-auto space-y-16">
+            <!-- Header -->
+            <div class="space-y-6">
+                <h1
+                    class="font-display text-4xl md:text-6xl font-bold tracking-tighter"
+                >
+                    {title}
+                </h1>
+                <p
+                    class="text-xl text-text-secondary leading-relaxed max-w-2xl"
+                >
+                    {description}
+                </p>
+
+                <!-- Key Metrics Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                    {
+                        metrics.map((metric) => (
+                            <div class="glass-card p-4 bg-accent-primary/5 border-accent-primary/20">
+                                <p class="text-xs font-mono text-accent-primary uppercase tracking-wider mb-1">
+                                    {metric.label}
+                                </p>
+                                <p class="text-lg font-semibold text-text-primary">
+                                    {metric.value}
+                                </p>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                <!-- Links -->
+                <div class="flex gap-4 pt-2">
+                    {
+                        github && (
+                            <a
+                                href={github}
+                                class="glass-card px-6 py-3 flex items-center gap-2 font-semibold hover:bg-white/5 transition-colors"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                                    <path d="M9 18c-4.51 2-5-2-7-2" />
+                                </svg>
+                                View Code
+                            </a>
+                        )
+                    }
+                    {
+                        demo && (
+                            <a
+                                href={demo}
+                                class="glass-card px-6 py-3 flex items-center gap-2 font-semibold hover:bg-white/5 transition-colors bg-accent-primary/10 border-accent-primary/30 text-accent-primary"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <>
+                                        <path d="M5 12h14" />
+                                        <path d="m12 5 7 7-7 7" />
+                                    </>
+                                </svg>
+                                Live Demo
+                            </a>
+                        )
+                    }
+                </div>
+            </div>
+
+            <!-- Content Slot -->
+            <div class="prose prose-invert prose-lg max-w-none">
+                <slot />
+            </div>
+        </Section>
+    </main>
+</Layout>
+
+<style is:global>
+    @reference "../styles/global.css";
+
+    /* Custom Prose Styles for Engineering Docs */
+    .prose h2 {
+        @apply font-display text-2xl font-bold text-text-primary mt-12 mb-6 border-b border-white/10 pb-4;
+    }
+    .prose h3 {
+        @apply font-display text-xl font-semibold text-text-primary mt-8 mb-4;
+    }
+    .prose p {
+        @apply text-text-secondary leading-relaxed mb-6;
+    }
+    .prose ul {
+        @apply list-disc list-outside ml-6 mb-6 space-y-2 text-text-secondary;
+    }
+    .prose strong {
+        @apply text-text-primary font-semibold;
+    }
+    .prose code {
+        @apply bg-white/10 px-1.5 py-0.5 rounded text-sm font-mono text-accent-tertiary;
+    }
+
+    /* Engineering Notes Accordion */
+    details {
+        @apply bg-bg-secondary/60 backdrop-blur-xl border border-white/10 rounded-2xl transition-all duration-300 p-4 mb-6 cursor-pointer hover:bg-white/5;
+    }
+    details summary {
+        @apply font-semibold text-text-primary flex items-center gap-2 list-none;
+    }
+    details summary::-webkit-details-marker {
+        display: none;
+    }
+    details summary::before {
+        content: "►";
+        @apply text-xs text-accent-secondary transition-transform;
+    }
+    details[open] summary::before {
+        @apply rotate-90;
+    }
+    details[open] summary {
+        @apply mb-4 border-b border-white/5 pb-4;
+    }
+</style>

@@ -1,0 +1,154 @@
+---
+import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
+
+const metrics = [
+    { label: "Latency", value: "41ms @ 512px" },
+    { label: "Model Size", value: "14MB (INT8)" },
+    { label: "Throughput", value: "24 FPS" },
+    { label: "Scale", value: "50k MAU" },
+];
+---
+
+<ProjectDetailLayout
+    title="Real-time Style Transfer on Edge"
+    description="Porting VGG-19 based style transfer models to mobile devices using NCNN and INT8 quantization."
+    metrics={metrics}
+    github="#"
+    demo="#"
+>
+    <h2>Problem & Constraints</h2>
+    <p>
+        Neural style transfer typically requires heavy GPU compute (VGG-19
+        backbone), making it infeasible for real-time applications on mobile
+        devices. The goal was to enable
+        <strong>real-time video stylization (24fps+)</strong> on mid-range Android
+        devices (Snapdragon 855 class) while maintaining perceptual quality closest
+        to the original optimization-based method.
+    </p>
+
+    <h2>Approach</h2>
+    <p>
+        The solution involved a multi-stage optimization pipeline focused on
+        model architecture and inference engine tuning:
+    </p>
+    <ul>
+        <li>
+            <strong>Architecture Distillation:</strong> Distilled a heavy VGG-19 encoder
+            into a lightweight MobileNetV3-Small backbone using perceptual loss.
+        </li>
+        <li>
+            <strong>Quantization-Aware Training (QAT):</strong> Fine-tuned the decoder
+            with quantization-aware training to minimize accuracy drop when converting
+            to INT8.
+        </li>
+        <li>
+            <strong>Inference Engine Migration:</strong> Ported the PyTorch model
+            to NCNN (Tencent's high-performance neural network framework) to leverage
+            Vulkan compute shaders on Android.
+        </li>
+    </ul>
+
+    <h2>Baselines & Evaluation</h2>
+    <p>Compared against standard implementations on the same hardware:</p>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">Method</th>
+                    <th class="py-2 px-4">Latency (ms)</th>
+                    <th class="py-2 px-4">Model Size</th>
+                    <th class="py-2 px-4">LPIPS (Lower is better)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Original VGG-19 (PyTorch Mobile)</td>
+                    <td class="py-2 px-4">840ms</td>
+                    <td class="py-2 px-4">500MB+</td>
+                    <td class="py-2 px-4">0.0 (Ref)</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Pruned VGG-16</td>
+                    <td class="py-2 px-4">320ms</td>
+                    <td class="py-2 px-4">120MB</td>
+                    <td class="py-2 px-4">0.04</td>
+                </tr>
+                <tr class="bg-accent-primary/5">
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >Our Method (NCNN + INT8)</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >41ms</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >14MB</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >0.09</td
+                    >
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Error Analysis & Failure Modes</h2>
+    <p>To ensure production reliability, I analyzed the top failure modes:</p>
+    <ul>
+        <li>
+            <strong>Temporal Flicker:</strong> Frame-to-frame inconsistency in video.
+            Solved by introducing a temporal consistency loss ($L&#123;temp&#125;$)
+            using optical flow warping during training.
+        </li>
+        <li>
+            <strong>Color Drift:</strong> INT8 quantization caused color shifts in
+            low-contrast regions. Mitigated by using a separate scale factor for style
+            features in the AdaIN layer.
+        </li>
+        <li>
+            <strong>Thermal Throttling:</strong> Sustained 60fps usage caused device
+            heating. Implemented an adaptive frame-skipping logic that throttles inference
+            frequency based on battery temperature sensors.
+        </li>
+    </ul>
+
+    <details open>
+        <summary>Engineering Notes: Profiling Bottlenecks</summary>
+        <p>
+            Profiling with Android Studio CPU Profiler revealed that 40% of
+            inference time was spent on memory copying between texture and
+            buffer memory. Switching to zero-copy Vulkan textures in NCNN
+            reduced total end-to-end latency by ~15ms.
+        </p>
+    </details>
+
+    <h2>Productionization</h2>
+    <p>
+        The model is served on-device (offline availability). A separate "Model
+        Delivery Service" (Python/FastAPI) handles OTA updates:
+    </p>
+    <ul>
+        <li>
+            <strong>A/B Testing:</strong> Can roll out new model weights to 5% of
+            users.
+        </li>
+        <li>
+            <strong>Monitoring:</strong> Telemetry tracks P99 latency and crash rates
+            (Sentry).
+        </li>
+        <li>
+            <strong>Rollback:</strong> Client app keeps the previous stable model
+            version and auto-reverts if crash rate spikes > 1%.
+        </li>
+    </ul>
+
+    <h2>What I'd Do Next</h2>
+    <ul>
+        <li>
+            Implement arbitrary style transfer (currently supports fixed 20
+            styles).
+        </li>
+        <li>Explore 4-bit quantization for further size reduction.</li>
+        <li>Port to WebGPU for browser-based support.</li>
+    </ul>
+</ProjectDetailLayout>

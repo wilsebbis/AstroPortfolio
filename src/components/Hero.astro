@@ -21,16 +21,27 @@ const socialLinks = [
             class="glass-card p-12 flex flex-col items-start gap-8 bg-bg-secondary/40 backdrop-blur-2xl border-white/5"
         >
             <!-- Identity Row -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
                 <div class="relative">
+                    <!-- Chaotic Blob 1 -->
                     <div
-                        class="absolute inset-0 bg-accent-primary/20 blur-xl rounded-full"
+                        class="absolute -inset-8 bg-gradient-to-br from-accent-primary to-purple-600 rounded-full blur-2xl opacity-40 animate-blob-1 mix-blend-screen"
+                    >
+                    </div>
+                    <!-- Chaotic Blob 2 -->
+                    <div
+                        class="absolute -inset-8 bg-gradient-to-tr from-accent-secondary to-pink-500 rounded-full blur-2xl opacity-40 animate-blob-2 mix-blend-screen"
+                    >
+                    </div>
+                    <!-- Chaotic Blob 3 -->
+                    <div
+                        class="absolute -inset-8 bg-gradient-to-bl from-accent-tertiary to-blue-400 rounded-full blur-2xl opacity-40 animate-blob-3 mix-blend-screen"
                     >
                     </div>
                     <Image
                         src={profileImage}
                         alt="Wil Bishop"
-                        class="relative w-16 h-16 rounded-full object-cover border-2 border-white/10"
+                        class="relative w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-2 border-white/10"
                         format="webp"
                         loading="eager"
                         width={256}
@@ -38,7 +49,7 @@ const socialLinks = [
                     />
                 </div>
                 <span
-                    class="font-display text-xl font-semibold text-text-secondary tracking-tight"
+                    class="font-display text-3xl md:text-4xl font-semibold text-text-secondary tracking-tight"
                     >Wil Bishop</span
                 >
             </div>
@@ -241,6 +252,64 @@ const socialLinks = [
     @keyframes ring-rotate {
         to {
             --ring-angle: 360deg;
+        }
+    }
+
+    .animate-blob-1 {
+        animation: blob-bounce-1 10s infinite alternate
+            cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .animate-blob-2 {
+        animation: blob-bounce-2 12s infinite alternate-reverse
+            cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .animate-blob-3 {
+        animation: blob-bounce-3 9s infinite alternate
+            cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes blob-bounce-1 {
+        0% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        33% {
+            transform: translate(10%, -10%) scale(1.1) rotate(120deg);
+        }
+        66% {
+            transform: translate(-5%, 15%) scale(0.9) rotate(240deg);
+        }
+        100% {
+            transform: translate(0, 0) scale(1) rotate(360deg);
+        }
+    }
+
+    @keyframes blob-bounce-2 {
+        0% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        33% {
+            transform: translate(-10%, -5%) scale(1.2) rotate(-100deg);
+        }
+        66% {
+            transform: translate(15%, 10%) scale(0.85) rotate(-200deg);
+        }
+        100% {
+            transform: translate(0, 0) scale(1) rotate(-360deg);
+        }
+    }
+
+    @keyframes blob-bounce-3 {
+        0% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        33% {
+            transform: translate(5%, 15%) scale(0.9) rotate(90deg);
+        }
+        66% {
+            transform: translate(-15%, -10%) scale(1.15) rotate(180deg);
+        }
+        100% {
+            transform: translate(0, 0) scale(1) rotate(270deg);
         }
     }
 </style>

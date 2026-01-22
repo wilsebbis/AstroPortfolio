@@ -1,0 +1,152 @@
+---
+import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
+
+const metrics = [
+    { label: "Sharpe Ratio", value: "2.1 vs 0.8" },
+    { label: "Exec Latency", value: "12ms" },
+    { label: "Max Drawdown", value: "-12%" },
+    { label: "Alpha", value: "+45%" },
+];
+---
+
+<ProjectDetailLayout
+    title="Multi-Agent RL for High-Frequency Trading"
+    description="Orchestrating competitive PPO agents for algorithmic trading in volatile crypto markets with strict risk constraints."
+    metrics={metrics}
+    github="#"
+>
+    <h2>Problem & Constraints</h2>
+    <p>
+        Crypto markets are highly volatile and inefficient, presenting
+        opportunities for algorithmic trading. However, traditional strategies
+        often fail due to <strong>non-stationary market regimes</strong> and
+        <strong>execution slippage</strong>. The goal was to build an RL agent
+        capable of adapting to changing volatility while maintaining strict risk
+        management (max drawdown less than 15%) and accounting for real-world
+        transaction costs.
+    </p>
+
+    <h2>Approach</h2>
+    <p>
+        I treated market making as a multi-agent reinforcement learning (MARL)
+        problem:
+    </p>
+    <ul>
+        <li>
+            <strong>Algorithm:</strong> Proximal Policy Optimization (PPO) with a
+            custom reward function that penalizes volatility (Sortino Ratio optimization).
+        </li>
+        <li>
+            <strong>Observation Space:</strong> 50ms order book snapshots (L2 data),
+            recent trade flow, and technical indicators (RSI, MACD) normalized via
+            z-score.
+        </li>
+        <li>
+            <strong>Simulation Environment:</strong> Built a custom high-performance
+            backtester using <code>VectorBT</code> (numba-accelerated) to simulate
+            years of L2 data in minutes. Included realistic latency (20ms) and fee
+            models (5bps).
+        </li>
+    </ul>
+
+    <h2>Baselines & Evaluation</h2>
+    <p>
+        Evaluated using <strong>Walk-Forward Analysis</strong> (train on 2018-2020,
+        test on Q1 2021, retrain, etc.) to prevent look-ahead bias.
+    </p>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">Strategy</th>
+                    <th class="py-2 px-4">Annual Return</th>
+                    <th class="py-2 px-4">Max Drawdown</th>
+                    <th class="py-2 px-4">Sharpe Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Buy & Hold (BTC)</td>
+                    <td class="py-2 px-4">+132%</td>
+                    <td class="py-2 px-4">-55%</td>
+                    <td class="py-2 px-4">0.85</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Grid Bot (Baseline)</td>
+                    <td class="py-2 px-4">+45%</td>
+                    <td class="py-2 px-4">-25%</td>
+                    <td class="py-2 px-4">1.2</td>
+                </tr>
+                <tr class="bg-accent-primary/5">
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >PPO Agent (Our Method)</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >+177%</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >-12%</td
+                    >
+                    <td class="py-2 px-4 font-semibold text-accent-primary"
+                        >2.1</td
+                    >
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Error Analysis & Failure Modes</h2>
+    <ul>
+        <li>
+            <strong>Regime Change Failure:</strong> The model struggled during the
+            sudden crash of May 2021.
+            <em>Fix:</em> Implemented a "Circuit Breaker" rule—if volatility exceeds
+            3-sigma, the agent switches to cash-only mode until stability returns.
+        </li>
+        <li>
+            <strong>Overfitting to Noise:</strong> Initial models memorized specific
+            price patterns.
+            <em>Fix:</em> Added domain randomization (randomly scaling price/volume
+            inputs by ±5%) during training to force feature learning over pattern
+            matching.
+        </li>
+    </ul>
+
+    <details open>
+        <summary>Engineering Notes: Infrastructure Choices</summary>
+        <p>
+            Switched from standard Python <code>multiprocessing</code> to <strong
+                >Ray</strong
+            > for parallel environment rollouts. This scaled training from 4 cores
+            to a 64-core AWS c5.18xlarge spot instance, reducing training time from
+            3 days to 4 hours. Used Redis as a high-throughput feature store for live
+            inference.
+        </p>
+    </details>
+
+    <h2>Productionization</h2>
+    <ul>
+        <li>
+            <strong>Live execution:</strong> Python asyncio service connecting to
+            Exchange Websockets.
+        </li>
+        <li>
+            <strong>Latency:</strong> End-to-end tick-to-trade latency optimized to
+            ~12ms (in same AWS region).
+        </li>
+        <li>
+            <strong>Monitoring:</strong> Prometheus/Grafana dashboard tracking PnL,
+            open exposure, and API rate limits in real-time.
+        </li>
+    </ul>
+
+    <h2>What I'd Do Next</h2>
+    <ul>
+        <li>
+            Implement Transformer-based policy networks (Decision Transformer)
+            for longer-context reasoning.
+        </li>
+        <li>Add sentiment analysis features from news APIs.</li>
+    </ul>
+</ProjectDetailLayout>

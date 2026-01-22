@@ -14,6 +14,7 @@ const roles = [
             "Kubernetes",
             "Redis",
         ],
+        isPrimary: true,
     },
     {
         title: "MLOps Architect",
@@ -70,21 +71,26 @@ const roles = [
             </div>
 
             <!-- Horizontal Carousel -->
-            <div class="relative -mx-8">
+            <div class="relative -mx-10">
                 <div
                     id="roles-carousel"
-                    class="flex gap-6 overflow-x-auto pb-8 px-8 snap-x snap-mandatory scrollbar-hide no-scrollbar scroll-smooth"
+                    class="flex gap-6 overflow-x-auto pb-8 pt-4 px-10 snap-x snap-mandatory scrollbar-hide no-scrollbar scroll-smooth"
                 >
                     {
                         roles.map((role, index) => (
                             <div
-                                class="role-card flex-none w-[280px] sm:w-[320px] lg:w-[380px] snap-start glass-card p-10 cursor-pointer group/card transition-all duration-500"
+                                class="role-card flex-none w-[280px] sm:w-[320px] lg:w-[380px] snap-start glass-card p-10 cursor-pointer group/card transition-all duration-500 relative"
                                 data-index={index}
                                 data-skills={role.skills.join(", ")}
                                 tabindex="0"
                                 role="button"
                                 aria-label={`Select ${role.title}`}
                             >
+                                {role.isPrimary && (
+                                    <div class="absolute -top-3 -right-3 bg-accent-primary text-bg-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-[0_0_15px_rgba(var(--color-accent-primary),0.6)] z-20">
+                                        Primary Focus
+                                    </div>
+                                )}
                                 <h3 class="font-display text-2xl font-bold mb-4 transition-colors duration-300 group-[.active]:text-accent-primary">
                                     {role.title}
                                 </h3>

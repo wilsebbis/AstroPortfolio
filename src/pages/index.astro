@@ -2,7 +2,9 @@
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import About from "../components/About.astro";
+import CaseStudy from "../components/CaseStudy.astro";
 import WhatIBuild from "../components/WhatIBuild.astro";
+import TechTicker from "../components/TechTicker.astro";
 import RolesCarousel from "../components/RolesCarousel.astro";
 import Projects from "../components/Projects.astro";
 import MLScrubber from "../components/MLScrubber.astro";
@@ -12,7 +14,10 @@ import Footer from "../components/Footer.astro";
 
 <Layout title="Wil Bishop | Applied ML Engineer">
     <Hero />
+    <TechTicker />
+    <!-- User requested "I built..." section back -->
     <WhatIBuild />
+    <CaseStudy />
     <RolesCarousel />
     <Projects />
     <MLScrubber />

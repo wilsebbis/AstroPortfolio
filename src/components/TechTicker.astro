@@ -1,0 +1,125 @@
+---
+const techs = [
+    // Languages
+    { icon: "devicon-python-plain", name: "Python" },
+    { icon: "devicon-typescript-plain", name: "TypeScript" },
+    { icon: "devicon-go-plain", name: "Go" },
+    { icon: "devicon-rust-plain", name: "Rust" },
+    { icon: "devicon-cplusplus-plain", name: "C++" },
+    { icon: "devicon-java-plain", name: "Java" },
+    { icon: "devicon-swift-plain", name: "Swift" },
+    { icon: "devicon-kotlin-plain", name: "Kotlin" },
+    { icon: "devicon-ruby-plain", name: "Ruby" },
+    { icon: "devicon-php-plain", name: "PHP" },
+    { icon: "devicon-bash-plain", name: "Bash" },
+
+    // Frontend
+    { icon: "devicon-react-original", name: "React" },
+    { icon: "devicon-vuejs-plain", name: "Vue" },
+    { icon: "devicon-angularjs-plain", name: "Angular" },
+    { icon: "devicon-svelte-plain", name: "Svelte" },
+    { icon: "devicon-astro-plain", name: "Astro" },
+    { icon: "devicon-nextjs-plain", name: "Next.js" },
+    { icon: "devicon-tailwindcss-plain", name: "Tailwind" },
+    { icon: "devicon-bootstrap-plain", name: "Bootstrap" },
+    { icon: "devicon-html5-plain", name: "HTML5" },
+    { icon: "devicon-css3-plain", name: "CSS3" },
+
+    // Backend/Data
+    { icon: "devicon-nodejs-plain", name: "Node.js" },
+    { icon: "devicon-fastapi-plain", name: "FastAPI" },
+    { icon: "devicon-django-plain", name: "Django" },
+    { icon: "devicon-flask-original", name: "Flask" },
+    { icon: "devicon-spring-plain", name: "Spring" },
+    { icon: "devicon-postgresql-plain", name: "Postgres" },
+    { icon: "devicon-mysql-plain", name: "MySQL" },
+    { icon: "devicon-mongodb-plain", name: "MongoDB" },
+    { icon: "devicon-redis-plain", name: "Redis" },
+    { icon: "devicon-elasticsearch-plain", name: "Elastic" },
+
+    // DevOps/Tools
+    { icon: "devicon-docker-plain", name: "Docker" },
+    { icon: "devicon-kubernetes-plain", name: "K8s" },
+    { icon: "devicon-terraform-plain", name: "Terraform" },
+    { icon: "devicon-ansible-plain", name: "Ansible" },
+    { icon: "devicon-jenkins-plain", name: "Jenkins" },
+    { icon: "devicon-gitlab-plain", name: "GitLab" },
+    { icon: "devicon-amazonwebservices-plain-wordmark", name: "AWS" },
+    { icon: "devicon-googlecloud-plain", name: "GCP" },
+    { icon: "devicon-azure-plain", name: "Azure" },
+    { icon: "devicon-nginx-plain", name: "Nginx" },
+    { icon: "devicon-linux-plain", name: "Linux" },
+    { icon: "devicon-git-plain", name: "Git" },
+];
+
+const colors = [
+    "#f472b6", // pink-400
+    "#c084fc", // purple-400
+    "#22d3ee", // cyan-400
+    "#818cf8", // indigo-400
+    "#34d399", // emerald-400
+    "#e879f9", // fuchsia-400
+    "#38bdf8", // sky-400
+    "#a78bfa", // violet-400
+];
+
+const coloredTechs = techs.map((tech, i) => ({
+    ...tech,
+    color: colors[i % colors.length],
+}));
+
+// Duplicate for seamless loop
+const allTechs = [...coloredTechs, ...coloredTechs];
+---
+
+<div
+    class="relative w-full overflow-hidden bg-bg-secondary/30 border-y border-white/5 py-12"
+>
+    <!-- Gradient Masks -->
+    <div
+        class="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-bg-primary to-transparent z-10 pointer-events-none"
+    >
+    </div>
+    <div
+        class="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-bg-primary to-transparent z-10 pointer-events-none"
+    >
+    </div>
+
+    <div class="flex animate-scroll gap-16 items-center">
+        {
+            allTechs.map((tech, i) => (
+                <div
+                    class="flex-none flex flex-col items-center gap-2 group cursor-default transition-all duration-300 hover:scale-110"
+                    aria-label={tech.name}
+                >
+                    <i
+                        class={`${tech.icon} text-4xl transition-colors`}
+                        style={{ color: tech.color }}
+                    />
+                    <span
+                        class="text-xs font-mono opacity-100 transition-opacity"
+                        style={{ color: tech.color }}
+                    >
+                        {tech.name}
+                    </span>
+                </div>
+            ))
+        }
+    </div>
+</div>
+
+<style>
+    .animate-scroll {
+        animation: scroll 60s linear infinite;
+        width: max-content;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+</style>
