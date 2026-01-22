@@ -1,8 +1,7 @@
 ---
-import Section from './Section.astro';
-import Card from './ui/Card.astro';
-import Button from './ui/Button.astro';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Download } from 'lucide-react';
+import Section from "./Section.astro";
+import Card from "./ui/Card.astro";
+import Button from "./ui/Button.astro";
 
 /* 
   Since we are avoiding React, we'll implement PDF.js control logic in Vanilla JS.
@@ -11,140 +10,375 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
 */
 ---
 
-<Section id="research">
-    <div class="pdf-container">
-        <h2>Publications</h2>
-        <Card class="viewer-card" id="pdf-viewer-root">
-            <div class="background-glow"></div>
+<Section id="research" class="py-24">
+    <div class="max-w-6xl mx-auto px-8">
+        <h2 class="font-display text-4xl font-bold mb-16 tracking-tight">
+            Publications & Research
+        </h2>
 
-            <h3 class="paper-title">Subtrajectory Clustering with ML on QC</h3>
-            <p class="description">
-                SSTDM25 - Short Paper (Camera Ready). Exploring novel approaches to subtrajectory clustering using quantum machine learning techniques.
-            </p>
-
-            <div class="pdf-wrapper" id="pdf-wrapper">
-                <div class="controls">
-                    <button class="control-btn" id="prev-page" disabled aria-label="Previous Page">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                    </button>
-                    <div class="page-info">
-                        <span id="page-num">1</span> / <span id="page-count">--</span>
+        <div
+            class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-12 items-start"
+        >
+            <div class="glass-card p-10 bg-bg-secondary/40">
+                <div class="flex items-start justify-between mb-8 gap-4">
+                    <div>
+                        <h3 class="font-display text-2xl font-bold mb-2">
+                            Subtrajectory Clustering with ML on QC
+                        </h3>
+                        <p
+                            class="text-accent-primary font-mono text-xs uppercase tracking-widest"
+                        >
+                            SSTDM25 - Short Paper (Camera Ready)
+                        </p>
                     </div>
-                    <button class="control-btn" id="next-page" disabled aria-label="Next Page">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    
-                    <div class="divider"></div>
-
-                    <button class="control-btn" id="zoom-out" disabled aria-label="Zoom Out">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
-                    </button>
-                    <button class="zoom-info" id="reset-zoom" title="Reset Zoom">100%</button>
-                    <button class="control-btn" id="zoom-in" disabled aria-label="Zoom In">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
-                    </button>
-
-                    <div class="divider"></div>
-
-                    <button class="control-btn" id="toggle-fullscreen" aria-label="Fullscreen">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-                    </button>
                 </div>
 
-                <div class="canvas-container">
-                    <canvas id="pdf-canvas"></canvas>
-                    <div class="loading-overlay" id="loading-overlay">
-                        <div class="spinner"></div>
-                        <p>Loading PDF...</p>
+                <div class="grid md:grid-cols-2 gap-8 mb-10">
+                    <div>
+                        <h4
+                            class="text-sm font-bold text-text-primary uppercase tracking-wider mb-4 border-b border-white/10 pb-2"
+                        >
+                            Key Contributions
+                        </h4>
+                        <ul
+                            class="space-y-3 text-sm text-text-secondary list-none"
+                        >
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-tertiary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><polyline points="20 6 9 17 4 12"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Integrated Quantum Machine Learning kernels into traditional
+                                clustering workflows.
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-tertiary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><polyline points="20 6 9 17 4 12"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Developed a novel distance metric for high-dimensional
+                                subtrajectory similarity.
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-tertiary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><polyline points="20 6 9 17 4 12"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Optimized tensor network contractions, achieving 40%
+                                speedup in simulation.
+                            </li>
+                        </ul>
                     </div>
-                    <div class="error-overlay hidden" id="error-overlay">
-                        <p>Failed to load PDF</p>
-                        <Button href="/paper.pdf" download size="sm" variant="secondary">Download Instead</Button>
+
+                    <div>
+                        <h4
+                            class="text-sm font-bold text-text-primary uppercase tracking-wider mb-4 border-b border-white/10 pb-2"
+                        >
+                            My Role
+                        </h4>
+                        <ul
+                            class="space-y-3 text-sm text-text-secondary list-none"
+                        >
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-primary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><circle cx="12" cy="12" r="10"
+                                        ></circle><polyline
+                                            points="12 6 12 12 16 14"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Lead developer for the open-source implementation
+                                in Python & Qiskit.
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-primary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><circle cx="12" cy="12" r="10"
+                                        ></circle><polyline
+                                            points="12 6 12 12 16 14"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Designed and executed large-scale benchmaring across
+                                4 synthetic datasets.
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent-primary mt-1">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        ><circle cx="12" cy="12" r="10"
+                                        ></circle><polyline
+                                            points="12 6 12 12 16 14"
+                                        ></polyline></svg
+                                    >
+                                </span>
+                                Authored the methodologies and results sections for
+                                the final manuscript.
+                            </li>
+                        </ul>
                     </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <Button
+                        href="/paper.pdf"
+                        download
+                        size="sm"
+                        class="bg-accent-primary hover:bg-accent-primary/80"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="mr-2"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                            ></path><polyline points="7 10 12 15 17 10"
+                            ></polyline><line x1="12" x2="12" y1="15" y2="3"
+                            ></line></svg
+                        >
+                        Download PDF
+                    </Button>
                 </div>
             </div>
 
-            <div class="download-section">
-                <Button href="/paper.pdf" download size="sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                    Download PDF
-                </Button>
+            <!-- PDF Viewer Sidebar / Preview -->
+            <div
+                class="glass-card p-6 bg-bg-secondary/20 border-dashed border-white/10"
+                id="pdf-viewer-root"
+            >
+                <div class="pdf-wrapper relative group" id="pdf-wrapper">
+                    <!-- Loading State -->
+                    <div
+                        class="canvas-container bg-black rounded-lg overflow-hidden relative min-h-[400px]"
+                    >
+                        <canvas id="pdf-canvas" class="w-full h-auto"></canvas>
+                        <div
+                            class="loading-overlay absolute inset-0 flex flex-col items-center justify-center bg-bg-secondary/80 backdrop-blur-md"
+                            id="loading-overlay"
+                        >
+                            <div
+                                class="w-10 h-10 border-2 border-accent-primary border-t-transparent rounded-full animate-spin mb-4"
+                            >
+                            </div>
+                            <p
+                                class="text-xs uppercase tracking-widest text-text-secondary"
+                            >
+                                Loading PDF Preview
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Compact Controls -->
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex gap-2">
+                            <button
+                                class="p-2 glass-card hover:bg-white/10 disabled:opacity-30"
+                                id="prev-page"
+                                disabled
+                                aria-label="Prev"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    ><path d="m15 18-6-6 6-6"></path></svg
+                                >
+                            </button>
+                            <span class="text-xs font-mono self-center px-2"
+                                ><span id="page-num">1</span>/<span
+                                    id="page-count">--</span
+                                ></span
+                            >
+                            <button
+                                class="p-2 glass-card hover:bg-white/10 disabled:opacity-30"
+                                id="next-page"
+                                disabled
+                                aria-label="Next"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    ><path d="m9 18 6-6-6-6"></path></svg
+                                >
+                            </button>
+                        </div>
+                        <button
+                            class="p-2 glass-card hover:bg-white/10"
+                            id="toggle-fullscreen"
+                            aria-label="Fullscreen"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                ><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path
+                                    d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path
+                                    d="M3 16v3a2 2 0 0 0 2 2h3"></path><path
+                                    d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg
+                            >
+                        </button>
+                    </div>
+                </div>
             </div>
-        </Card>
+        </div>
     </div>
 </Section>
 
 <script>
     // We only load PDF.js when the component is in view
-    let pdfDoc = null;
+    let pdfDoc: any = null;
     let pageNum = 1;
     let pageRendering = false;
-    let pageNumPending = null;
+    let pageNumPending: number | null = null;
     let scale = 1.0;
-    let pdfjsLib = null;
-    const canvas = document.getElementById('pdf-canvas');
-    const ctx = canvas.getContext('2d');
+    let pdfjsLib: any = null;
+    const canvas = document.getElementById("pdf-canvas") as HTMLCanvasElement;
+    const ctx = canvas?.getContext("2d");
 
     const elements = {
-        prev: document.getElementById('prev-page'),
-        next: document.getElementById('next-page'),
-        zoomIn: document.getElementById('zoom-in'),
-        zoomOut: document.getElementById('zoom-out'),
-        resetZoom: document.getElementById('reset-zoom'),
-        pageNum: document.getElementById('page-num'),
-        pageCount: document.getElementById('page-count'),
-        loading: document.getElementById('loading-overlay'),
-        error: document.getElementById('error-overlay'),
-        wrapper: document.getElementById('pdf-wrapper'),
-        fullscreenBtn: document.getElementById('toggle-fullscreen')
+        prev: document.getElementById("prev-page") as HTMLButtonElement,
+        next: document.getElementById("next-page") as HTMLButtonElement,
+        pageNum: document.getElementById("page-num"),
+        pageCount: document.getElementById("page-count"),
+        loading: document.getElementById("loading-overlay"),
+        error: document.getElementById("error-overlay"),
+        wrapper: document.getElementById("pdf-wrapper"),
+        fullscreenBtn: document.getElementById("toggle-fullscreen"),
     };
 
-    function renderPage(num) {
+    function renderPage(num: number) {
+        if (!pdfDoc || !ctx || !canvas) return;
         pageRendering = true;
-        
-        pdfDoc.getPage(num).then(function(page) {
-            // Responsive scale adjustment: fit width
-            const updateScale = () => {
-                const wrapperWidth = elements.wrapper.clientWidth - 48; // padding
-                const unscaledViewport = page.getViewport({scale: 1});
-                const fitScale = Math.min(wrapperWidth / unscaledViewport.width, 1.5); // Cap max default
-                return fitScale * scale;
-            };
 
-            const currentViewport = page.getViewport({scale: updateScale()});
-            canvas.height = currentViewport.height;
-            canvas.width = currentViewport.width;
+        pdfDoc
+            .getPage(num)
+            .then(function (page: any) {
+                const updateScale = () => {
+                    const wrapperWidth =
+                        (elements.wrapper?.clientWidth || 800) - 48;
+                    const unscaledViewport = page.getViewport({ scale: 1 });
+                    const fitScale = Math.min(
+                        wrapperWidth / unscaledViewport.width,
+                        1.5,
+                    );
+                    return fitScale * scale;
+                };
 
-            const renderContext = {
-                canvasContext: ctx,
-                viewport: currentViewport
-            };
-            
-            const renderTask = page.render(renderContext);
+                const currentViewport = page.getViewport({
+                    scale: updateScale(),
+                });
+                canvas.height = currentViewport.height;
+                canvas.width = currentViewport.width;
 
-            renderTask.promise.then(function() {
-                pageRendering = false;
-                elements.loading.classList.add('hidden');
-                
-                if (pageNumPending !== null) {
-                    renderPage(pageNumPending);
-                    pageNumPending = null;
-                }
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: currentViewport,
+                };
+
+                const renderTask = page.render(renderContext);
+
+                renderTask.promise.then(function () {
+                    pageRendering = false;
+                    elements.loading?.classList.add("hidden");
+
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            })
+            .catch((err: any) => {
+                console.error(err);
+                elements.loading?.classList.add("hidden");
+                elements.error?.classList.remove("hidden");
             });
-        }).catch(err => {
-            console.error(err);
-            elements.loading.classList.add('hidden');
-            elements.error.classList.remove('hidden');
-        });
 
-        elements.pageNum.textContent = num;
+        if (elements.pageNum) elements.pageNum.textContent = num.toString();
 
-        // Update button states
-        elements.prev.disabled = num <= 1;
-        elements.next.disabled = num >= pdfDoc.numPages;
+        if (elements.prev) elements.prev.disabled = num <= 1;
+        if (elements.next) elements.next.disabled = num >= pdfDoc.numPages;
     }
 
-    function queueRenderPage(num) {
+    function queueRenderPage(num: number) {
         if (pageRendering) {
             pageNumPending = num;
         } else {
@@ -159,53 +393,25 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
     }
 
     function onNextPage() {
-        if (pageNum >= pdfDoc.numPages) return;
+        if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
         pageNum++;
-        queueRenderPage(pageNum);
-    }
-
-    function onZoomIn() {
-        if (scale >= 3.0) return;
-        scale += 0.25;
-        elements.resetZoom.textContent = Math.round(scale * 100) + '%';
-        elements.zoomIn.disabled = scale >= 3.0;
-        elements.zoomOut.disabled = false;
-        queueRenderPage(pageNum);
-    }
-
-    function onZoomOut() {
-        if (scale <= 0.5) return;
-        scale -= 0.25;
-        elements.resetZoom.textContent = Math.round(scale * 100) + '%';
-        elements.zoomOut.disabled = scale <= 0.5;
-        elements.zoomIn.disabled = false;
-        queueRenderPage(pageNum);
-    }
-
-    function onResetZoom() {
-        scale = 1.0;
-        elements.resetZoom.textContent = '100%';
-        elements.zoomOut.disabled = false;
-        elements.zoomIn.disabled = false;
         queueRenderPage(pageNum);
     }
 
     /* Lazy Load Logic */
     const loadPDF = async () => {
         try {
-            // Load PDF.js from CDN
-            if (!window.pdfjsLib) {
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
-                script.type = 'module';
+            if (!(window as any).pdfjsLib) {
+                const script = document.createElement("script");
+                script.src =
+                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs";
+                script.type = "module";
                 document.head.appendChild(script);
-                
-                // Wait for it to load
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                    // Check periodically if module loaded (since module scripts don't always fire onload same way)
-                     const check = setInterval(() => {
-                        if (window.pdfjsLib) {
+
+                await new Promise<void>((resolve) => {
+                    script.onload = () => resolve();
+                    const check = setInterval(() => {
+                        if ((window as any).pdfjsLib) {
                             clearInterval(check);
                             resolve();
                         }
@@ -213,59 +419,55 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
                 });
             }
 
-            pdfjsLib = window.pdfjsLib;
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+            pdfjsLib = (window as any).pdfjsLib;
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs";
 
-            const loadingTask = pdfjsLib.getDocument('/paper.pdf');
+            const loadingTask = pdfjsLib.getDocument("/paper.pdf");
             pdfDoc = await loadingTask.promise;
-            
-            elements.pageCount.textContent = pdfDoc.numPages;
-            elements.next.disabled = false;
-            elements.zoomIn.disabled = false;
-            elements.zoomOut.disabled = false;
-            
-            renderPage(pageNum);
 
+            if (elements.pageCount)
+                elements.pageCount.textContent = pdfDoc.numPages;
+            if (elements.next) elements.next.disabled = false;
+
+            renderPage(pageNum);
         } catch (error) {
-            console.error('Error loading PDF:', error);
-            elements.loading.classList.add('hidden');
-            elements.error.classList.remove('hidden');
+            console.error("Error loading PDF:", error);
+            elements.loading?.classList.add("hidden");
+            elements.error?.classList.remove("hidden");
         }
     };
 
-    // Intersection Observer to lazy load
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                loadPDF();
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { rootMargin: '200px' });
+    const root = document.getElementById("pdf-viewer-root");
+    if (root) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        loadPDF();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { rootMargin: "200px" },
+        );
+        observer.observe(root);
+    }
 
-    observer.observe(document.getElementById('pdf-viewer-root'));
+    elements.prev?.addEventListener("click", onPrevPage);
+    elements.next?.addEventListener("click", onNextPage);
 
-    // Event Listeners
-    elements.prev.addEventListener('click', onPrevPage);
-    elements.next.addEventListener('click', onNextPage);
-    elements.zoomIn.addEventListener('click', onZoomIn);
-    elements.zoomOut.addEventListener('click', onZoomOut);
-    elements.resetZoom.addEventListener('click', onResetZoom);
-    
-    // Fullscreen logic
-    elements.fullscreenBtn.addEventListener('click', () => {
+    elements.fullscreenBtn?.addEventListener("click", () => {
         const wrapper = elements.wrapper;
+        if (!wrapper) return;
         if (!document.fullscreenElement) {
-            wrapper.requestFullscreen().catch(err => {
-                console.log(`Error attempting to enable fullscreen: ${err.message}`);
+            wrapper.requestFullscreen().catch((err) => {
+                console.log(`Error: ${err.message}`);
             });
-            wrapper.classList.add('fullscreen');
         } else {
             document.exitFullscreen();
-            wrapper.classList.remove('fullscreen');
         }
     });
-
 </script>
 
 <style>
@@ -293,7 +495,11 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
         right: -20%;
         width: 500px;
         height: 500px;
-        background: radial-gradient(circle, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
+        background: radial-gradient(
+            circle,
+            rgba(20, 184, 166, 0.1) 0%,
+            transparent 70%
+        );
         border-radius: 50%;
         pointer-events: none;
     }
@@ -410,7 +616,8 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
         max-width: 100%;
     }
 
-    .loading-overlay, .error-overlay {
+    .loading-overlay,
+    .error-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -439,7 +646,9 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Maximize2, Minimize2, Downl
     }
 
     @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     .download-section {

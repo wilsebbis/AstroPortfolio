@@ -1,0 +1,153 @@
+---
+import Section from "./Section.astro";
+
+const stages = [
+    {
+        title: "Ingestion & Data Flow",
+        description:
+            "Automated pipelines that ingest terabytes of raw data, ensuring high fidelity and low-latency storage.",
+        subtext: "Spark, Kafka, Snowflake",
+    },
+    {
+        title: "Training & Optimization",
+        description:
+            "Scalable training loops with distributed GPU support and integrated hyperparameter tuning.",
+        subtext: "PyTorch, CUDA, Horovod",
+    },
+    {
+        title: "Evaluation & Validation",
+        description:
+            "Rigorous testing frameworks that detect drift, bias, and edge-case failures before deployment.",
+        subtext: "MLflow, Weights & Biases",
+    },
+    {
+        title: "Deployment & Inference",
+        description:
+            "Optimized model serving using TensorRT and Triton for sub-millisecond response times.",
+        subtext: "K8s, Triton, FastAPI",
+    },
+    {
+        title: "Monitoring & Observability",
+        description:
+            "Full-stack monitoring of model performance and hardware health in live production environments.",
+        subtext: "Prometheus, Grafana",
+    },
+];
+---
+
+<Section id="narrative" class="py-32 bg-bg-primary/50 relative overflow-hidden">
+    <!-- Background Narrative Path -->
+    <div class="absolute inset-0 pointer-events-none opacity-10">
+        <svg
+            class="w-full h-full"
+            viewBox="0 0 1440 800"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                id="scrub-path"
+                d="M0 100C300 100 400 700 720 700C1040 700 1140 100 1440 100"
+                stroke="url(#paint0_linear)"
+                stroke-width="2"
+                stroke-dasharray="10 10"></path>
+            <defs>
+                <linearGradient
+                    id="paint0_linear"
+                    x1="0"
+                    y1="400"
+                    x2="1440"
+                    y2="400"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stop-color="#6366f1"></stop>
+                    <stop offset="0.5" stop-color="#a855f7"></stop>
+                    <stop offset="1" stop-color="#14b8a6"></stop>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-8 relative">
+        <div class="space-y-4 mb-24 text-center">
+            <h2
+                class="font-display text-4xl md:text-5xl font-bold tracking-tight"
+            >
+                Systemic Lifecycle
+            </h2>
+            <p class="text-text-secondary">
+                How I think about building end-to-end ML products.
+            </p>
+        </div>
+
+        <div class="space-y-40">
+            {
+                stages.map((stage, i) => (
+                    <div
+                        class="scrub-stage flex flex-col items-center text-center opacity-30 transition-all duration-700"
+                        data-index={i}
+                    >
+                        <div class="w-16 h-16 rounded-full glass-card flex items-center justify-center font-display text-2xl font-bold text-accent-primary mb-8 border-accent-primary/20">
+                            {i + 1}
+                        </div>
+                        <h3 class="font-display text-3xl font-bold mb-4">
+                            {stage.title}
+                        </h3>
+                        <p class="text-lg text-text-secondary max-w-lg mb-6 leading-relaxed">
+                            {stage.description}
+                        </p>
+                        <span class="font-mono text-sm text-accent-tertiary bg-accent-tertiary/10 px-4 py-1 rounded-full uppercase tracking-widest">
+                            {stage.subtext}
+                        </span>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</Section>
+
+<script>
+    const stages = document.querySelectorAll(".scrub-stage");
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove(
+                        "opacity-30",
+                        "scale-90",
+                        "blur-sm",
+                    );
+                    entry.target.classList.add(
+                        "opacity-100",
+                        "scale-100",
+                        "blur-0",
+                    );
+                } else {
+                    entry.target.classList.add(
+                        "opacity-30",
+                        "scale-90",
+                        "blur-sm",
+                    );
+                    entry.target.classList.remove(
+                        "opacity-100",
+                        "scale-100",
+                        "blur-0",
+                    );
+                }
+            });
+        },
+        {
+            threshold: 0.5,
+            rootMargin: "-10% 0px -10% 0px",
+        },
+    );
+
+    stages.forEach((stage) => observer.observe(stage));
+</script>
+
+<style>
+    .scrub-stage {
+        transition-property: opacity, transform, filter;
+        will-change: opacity, transform, filter;
+    }
+</style>

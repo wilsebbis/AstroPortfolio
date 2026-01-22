@@ -22,6 +22,40 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
+		<script>
+			// Scroll Progress logic
+			const progressBar = document.querySelector(".scroll-progress");
+			window.addEventListener("scroll", () => {
+				const windowHeight =
+					document.documentElement.scrollHeight -
+					document.documentElement.clientHeight;
+				const scrolled = window.scrollY / windowHeight;
+				if (progressBar instanceof HTMLElement) {
+					progressBar.style.transform = `scaleX(${scrolled})`;
+				}
+			});
+
+			// Global Reveal Observer
+			const observerOptions = {
+				root: null,
+				rootMargin: "0px",
+				threshold: 0.1,
+			};
+
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add("active");
+					}
+				});
+			}, observerOptions);
+
+			document.addEventListener("DOMContentLoaded", () => {
+				const revealElements = document.querySelectorAll(".reveal");
+				revealElements.forEach((el) => observer.observe(el));
+			});
+		</script>
+
 		<!-- Google Fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -31,6 +65,9 @@ const {
 		/>
 	</head>
 	<body>
+		<div class="scroll-progress"></div>
+		<div class="grain-overlay"></div>
+		<div class="aurora-background"></div>
 		<main>
 			<slot />
 		</main>

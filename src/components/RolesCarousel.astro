@@ -1,0 +1,393 @@
+---
+import Section from "./Section.astro";
+
+const roles = [
+    {
+        title: "Applied ML Engineer",
+        description:
+            "Bridging the gap between research and production systems.",
+        skills: [
+            "PyTorch",
+            "TRT-LLM",
+            "Docker",
+            "FastAPI",
+            "Kubernetes",
+            "Redis",
+        ],
+    },
+    {
+        title: "MLOps Architect",
+        description:
+            "Designing scalable infrastructure for automated model lifecycles.",
+        skills: [
+            "Airflow",
+            "MLflow",
+            "KubeFlow",
+            "Terraform",
+            "AWS",
+            "Prometheus",
+        ],
+    },
+    {
+        title: "Backend Engineer",
+        description:
+            "Building the backbone for performance-critical applications.",
+        skills: ["Go", "Rust", "TypeScript", "PostgreSQL", "gRPC", "Kafka"],
+    },
+    {
+        title: "AI Product Designer",
+        description:
+            "Ensuring human-centered design in the age of intelligence.",
+        skills: [
+            "Next.js",
+            "Tailwind",
+            "Framer Motion",
+            "D3.js",
+            "User Research",
+        ],
+    },
+];
+---
+
+<Section id="roles" class="py-24 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-8">
+        <div
+            class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 items-center"
+        >
+            <!-- Left: Typewriter Section -->
+            <div class="space-y-6">
+                <h2 class="font-display text-4xl font-bold tracking-tight">
+                    Where I'm Strongest
+                </h2>
+                <div
+                    class="glass-card p-8 bg-accent-primary/5 border-accent-primary/20 min-h-[200px]"
+                >
+                    <p
+                        class="text-sm font-mono text-accent-primary mb-2 uppercase tracking-widest"
+                    >
+                        Stack for this role:
+                    </p>
+                    <div
+                        id="typewriter-container"
+                        class="font-display text-2xl font-bold text-text-primary typewriter-cursor"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Horizontal Carousel -->
+            <div class="relative group z-10">
+                <div
+                    id="roles-carousel"
+                    class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide no-scrollbar scroll-smooth relative z-10"
+                >
+                    {
+                        roles.map((role, index) => (
+                            <div
+                                class="role-card flex-none w-[300px] sm:w-[320px] snap-start glass-card p-10 cursor-pointer group/card transition-all duration-500"
+                                data-index={index}
+                                data-skills={role.skills.join(", ")}
+                                tabindex="0"
+                                role="button"
+                                aria-label={`Select ${role.title}`}
+                            >
+                                <h3 class="font-display text-2xl font-bold mb-4 transition-colors duration-300 group-[.active]:text-accent-primary">
+                                    {role.title}
+                                </h3>
+                                <p class="text-text-secondary leading-relaxed">
+                                    {role.description}
+                                </p>
+
+                                <div class="mt-8 flex justify-end">
+                                    <span class="w-12 h-px bg-white/10 group-[.active]:bg-accent-primary group-[.active]:w-full transition-all duration-500" />
+                                </div>
+                            </div>
+                        ))
+                    }
+                    <!-- Spacer to allow the last card to reach the left -->
+                    <div class="flex-none w-[80vw] pointer-events-none"></div>
+                </div>
+
+                <!-- Indicators -->
+                <div class="flex gap-2 mt-4 justify-start px-4">
+                    {
+                        roles.map((role, i) => (
+                            <div
+                                class="h-1 w-8 bg-white/10 rounded-full indicator cursor-pointer transition-all duration-300 hover:bg-white/20"
+                                data-index={i}
+                                tabindex="0"
+                                role="button"
+                                aria-label={`Go to ${role.title}`}
+                            />
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</Section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("[RolesCarousel] Initializing...");
+
+        var carousel = document.getElementById("roles-carousel");
+        var typewriterElement = document.getElementById("typewriter-container");
+        var cards = document.querySelectorAll(".role-card");
+        var indicators = document.querySelectorAll(".indicator");
+
+        console.log("[RolesCarousel] Found elements:", {
+            carousel: !!carousel,
+            typewriter: !!typewriterElement,
+            cards: cards.length,
+            indicators: indicators.length,
+        });
+
+        var activeIndex = -1;
+        var autoAdvanceInterval = null;
+        var typewriterAborted = false;
+        var isUserInteracting = false;
+        var interactionTimeout = null;
+
+        // --- Active Card Detection ---
+        function updateActiveFromScroll() {
+            if (!carousel) return;
+
+            var closestIndex = 0;
+            var minDistance = Infinity;
+
+            for (var i = 0; i < cards.length; i++) {
+                var card = cards[i];
+                var rect = card.getBoundingClientRect();
+                var carouselRect = carousel.getBoundingClientRect();
+                var distance = Math.abs(rect.left - carouselRect.left);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = i;
+                }
+            }
+
+            if (closestIndex !== activeIndex) {
+                setActiveCard(closestIndex);
+            }
+        }
+
+        function setActiveCard(index) {
+            if (index === activeIndex) return;
+            activeIndex = index;
+            console.log("[RolesCarousel] Setting active card:", index);
+
+            // Update card styles
+            for (var i = 0; i < cards.length; i++) {
+                var card = cards[i];
+                if (i === activeIndex) {
+                    card.classList.add(
+                        "active",
+                        "border-accent-primary/50",
+                        "bg-accent-primary/5",
+                    );
+                    card.classList.remove("opacity-20", "scale-95");
+                } else {
+                    card.classList.remove(
+                        "active",
+                        "border-accent-primary/50",
+                        "bg-accent-primary/5",
+                    );
+                    card.classList.add("opacity-20", "scale-95");
+                }
+            }
+
+            // Update indicators
+            for (var j = 0; j < indicators.length; j++) {
+                var ind = indicators[j];
+                if (j === activeIndex) {
+                    ind.classList.remove("bg-white/10", "w-8");
+                    ind.classList.add("bg-accent-primary", "w-12");
+                } else {
+                    ind.classList.add("bg-white/10", "w-8");
+                    ind.classList.remove("bg-accent-primary", "w-12");
+                }
+            }
+
+            // Trigger Typewriter
+            var skills = cards[activeIndex].getAttribute("data-skills") || "";
+            runTypewriter(skills);
+        }
+
+        var typewriterId = 0; // Unique ID for each typewriter run
+
+        function runTypewriter(text) {
+            // Increment ID to invalidate any running typewriter
+            typewriterId++;
+            var currentRunId = typewriterId;
+
+            if (!typewriterElement) return;
+
+            // Clear immediately and start fresh
+            typewriterElement.textContent = "";
+
+            var skillsArray = text.split(", ");
+            var displayText = "";
+            var totalChars = 0;
+
+            // Build full target text
+            for (var i = 0; i < skillsArray.length; i++) {
+                if (i > 0) displayText += " • ";
+                displayText += skillsArray[i];
+            }
+
+            function typeNextChar() {
+                // Check if this run is still valid
+                if (currentRunId !== typewriterId) return;
+
+                if (totalChars < displayText.length) {
+                    typewriterElement.textContent = displayText.slice(
+                        0,
+                        totalChars + 1,
+                    );
+                    totalChars++;
+                    setTimeout(typeNextChar, 30);
+                }
+            }
+
+            // Small delay before starting to type
+            setTimeout(function () {
+                if (currentRunId !== typewriterId) return;
+                typeNextChar();
+            }, 100);
+        }
+
+        // --- Navigation ---
+        function scrollToCard(index) {
+            console.log("[RolesCarousel] Scrolling to card:", index);
+            if (!carousel) return;
+            var targetCard = cards[index];
+            if (!targetCard) return;
+
+            var scrollOffset = targetCard.offsetLeft - carousel.offsetLeft;
+
+            carousel.scrollTo({
+                left: scrollOffset,
+                behavior: "smooth",
+            });
+        }
+
+        function autoAdvance() {
+            if (!carousel || document.hidden || isUserInteracting) return;
+            var nextIndex = (activeIndex + 1) % cards.length;
+            scrollToCard(nextIndex);
+        }
+
+        function handleManualInteraction() {
+            console.log("[RolesCarousel] Manual interaction detected");
+            isUserInteracting = true;
+            if (interactionTimeout) clearTimeout(interactionTimeout);
+            stopAutoAdvance();
+
+            interactionTimeout = setTimeout(function () {
+                isUserInteracting = false;
+                startAutoAdvance();
+            }, 8000);
+        }
+
+        function startAutoAdvance() {
+            stopAutoAdvance();
+            if (
+                window.matchMedia &&
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            )
+                return;
+            autoAdvanceInterval = setInterval(autoAdvance, 5000);
+            console.log("[RolesCarousel] Auto-advance started");
+        }
+
+        function stopAutoAdvance() {
+            if (autoAdvanceInterval) {
+                clearInterval(autoAdvanceInterval);
+                autoAdvanceInterval = null;
+            }
+        }
+
+        // --- Event Listeners using event delegation for Safari ---
+        if (carousel) {
+            carousel.addEventListener(
+                "scroll",
+                function () {
+                    updateActiveFromScroll();
+                },
+                { passive: true },
+            );
+
+            carousel.addEventListener("mousedown", handleManualInteraction);
+            carousel.addEventListener("touchstart", handleManualInteraction, {
+                passive: true,
+            });
+            carousel.addEventListener("wheel", handleManualInteraction, {
+                passive: true,
+            });
+        }
+
+        // Click handlers for cards - using onclick for Safari compatibility
+        for (var k = 0; k < cards.length; k++) {
+            (function (index) {
+                var card = cards[index];
+                card.onclick = function (e) {
+                    e.preventDefault();
+                    console.log("[RolesCarousel] Card clicked:", index);
+                    handleManualInteraction();
+                    scrollToCard(index);
+                };
+            })(k);
+        }
+
+        // Click handlers for indicators
+        for (var m = 0; m < indicators.length; m++) {
+            (function (index) {
+                var indicator = indicators[index];
+                indicator.onclick = function (e) {
+                    e.preventDefault();
+                    console.log("[RolesCarousel] Indicator clicked:", index);
+                    handleManualInteraction();
+                    scrollToCard(index);
+                };
+            })(m);
+        }
+
+        // Initialize
+        updateActiveFromScroll();
+        startAutoAdvance();
+        console.log("[RolesCarousel] Initialization complete");
+    });
+</script>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    #roles-carousel {
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+    }
+
+    .role-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .indicator {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+</style>

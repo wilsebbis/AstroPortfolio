@@ -1,0 +1,45 @@
+---
+interface Props {
+    href?: string;
+    variant?: "primary" | "ghost";
+    class?: string;
+}
+
+const { href, variant = "primary", class: className } = Astro.props;
+const Element = href ? "a" : "button";
+---
+
+<Element
+    href={href}
+    class:list={[
+        "relative inline-flex items-center justify-center px-8 py-3 font-display font-bold rounded-full transition-all duration-300 group overflow-hidden",
+        variant === "primary"
+            ? "bg-accent-primary text-white shadow-lg shadow-accent-primary/25 hover:shadow-accent-primary/40 hover:-translate-y-0.5"
+            : "bg-white/5 text-text-primary border border-white/10 hover:bg-white/10 hover:-translate-y-0.5",
+        className,
+    ]}
+>
+    <!-- Shimmer effect for primary -->
+    {
+        variant === "primary" && (
+            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] skew-x-[-20deg]" />
+        )
+    }
+
+    <!-- Glow effect -->
+    <span
+        class="absolute inset-0 bg-accent-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+    ></span>
+
+    <span class="relative z-10 flex items-center gap-2">
+        <slot />
+    </span>
+</Element>
+
+<style>
+    @keyframes shimmer {
+        100% {
+            transform: translateX(100%) skewX(-20deg);
+        }
+    }
+</style>
