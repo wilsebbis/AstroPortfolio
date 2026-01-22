@@ -143,12 +143,14 @@ const roles = [
                     {
                         roles.map((role, i) => (
                             <div
-                                class="h-1 w-8 bg-white/10 rounded-full indicator cursor-pointer transition-all duration-300 hover:bg-white/20"
+                                class="h-2 w-8 bg-white/10 rounded-full indicator cursor-pointer overflow-hidden transition-all duration-300"
                                 data-index={i}
                                 tabindex="0"
                                 role="button"
                                 aria-label={`Go to ${role.title}`}
-                            />
+                            >
+                                <div class="indicator-fill h-full w-0 bg-accent-primary" />
+                            </div>
                         ))
                     }
                 </div>
@@ -174,10 +176,6 @@ const roles = [
         });
 
         var activeIndex = -1;
-        var autoAdvanceInterval = null;
-        var typewriterAborted = false;
-        var isUserInteracting = false;
-        var interactionTimeout = null;
 
         // --- Active Card Detection ---
         function updateActiveFromScroll() {
@@ -187,7 +185,7 @@ const roles = [
             var minDistance = Infinity;
 
             for (var i = 0; i < cards.length; i++) {
-                var card = cards[i];
+                var card = cards[i] as HTMLElement;
                 var rect = card.getBoundingClientRect();
                 var carouselRect = carousel.getBoundingClientRect();
                 var distance = Math.abs(rect.left - carouselRect.left);
@@ -203,8 +201,23 @@ const roles = [
             }
         }
 
-        function setActiveCard(index) {
-            if (index === activeIndex) return;
+        function setActiveCard(index: number) {
+            // Allow resetting the same index if we want to restart the animation manually
+            // But existing logic blocks it.
+            // If we want clicking the indicator to "restart" the timer for that slide, we need to allow re-entry or force reflow explicitly.
+            if (index === activeIndex) {
+                // Determine if we need to force restart current animation
+                // For now, if activeIndex matches, we just insure animation is running?
+                // Actually, if we click the current one, updateActiveFromScroll calls us.
+                // Let's rely on the indicators loop below to handle reflows if needed,
+                // but usually we exit early here.
+                // If the user clicks the *current* card, we probably want to restart the timer.
+                // So let's allow it?
+                // Problem: Scroll event fires constantly. We don't want to restart constantly.
+                // So we MUST return if index === activeIndex.
+                return;
+            }
+
             activeIndex = index;
             console.log("[RolesCarousel] Setting active card:", index);
 
@@ -228,60 +241,68 @@ const roles = [
                 }
             }
 
-            // Update indicators
+            // Update indicators and manage animation
             for (var j = 0; j < indicators.length; j++) {
-                var ind = indicators[j];
+                var ind = indicators[j] as HTMLElement;
+                var fill = ind.querySelector(".indicator-fill") as HTMLElement;
+
+                // Clear any manual interaction state immediately
+                ind.classList.remove("paused");
+
                 if (j === activeIndex) {
-                    ind.classList.remove("bg-white/10", "w-8");
-                    ind.classList.add("bg-accent-primary", "w-12");
+                    // Force reflow to restart animation
+                    ind.classList.remove("active");
+                    if (fill) {
+                        fill.style.animation = "none";
+                        ind.offsetHeight; /* trigger reflow */
+                        fill.style.animation = "";
+                    }
+                    ind.classList.add("active");
                 } else {
-                    ind.classList.add("bg-white/10", "w-8");
-                    ind.classList.remove("bg-accent-primary", "w-12");
+                    ind.classList.remove("active");
                 }
             }
 
             // Trigger Typewriter
-            var skills = cards[activeIndex].getAttribute("data-skills") || "";
+            var activeCard = cards[activeIndex] as HTMLElement;
+            var skills = activeCard.getAttribute("data-skills") || "";
             runTypewriter(skills);
         }
 
-        var typewriterId = 0; // Unique ID for each typewriter run
+        var typewriterId = 0;
 
-        function runTypewriter(text) {
-            // Increment ID to invalidate any running typewriter
+        function runTypewriter(text: string) {
             typewriterId++;
             var currentRunId = typewriterId;
 
             if (!typewriterElement) return;
 
-            // Clear immediately and start fresh
             typewriterElement.textContent = "";
 
             var skillsArray = text.split(", ");
             var displayText = "";
             var totalChars = 0;
 
-            // Build full target text
             for (var i = 0; i < skillsArray.length; i++) {
                 if (i > 0) displayText += " • ";
                 displayText += skillsArray[i];
             }
 
             function typeNextChar() {
-                // Check if this run is still valid
                 if (currentRunId !== typewriterId) return;
 
                 if (totalChars < displayText.length) {
-                    typewriterElement.textContent = displayText.slice(
-                        0,
-                        totalChars + 1,
-                    );
+                    if (typewriterElement) {
+                        typewriterElement.textContent = displayText.slice(
+                            0,
+                            totalChars + 1,
+                        );
+                    }
                     totalChars++;
                     setTimeout(typeNextChar, 30);
                 }
             }
 
-            // Small delay before starting to type
             setTimeout(function () {
                 if (currentRunId !== typewriterId) return;
                 typeNextChar();
@@ -289,10 +310,10 @@ const roles = [
         }
 
         // --- Navigation ---
-        function scrollToCard(index) {
+        function scrollToCard(index: number) {
             console.log("[RolesCarousel] Scrolling to card:", index);
             if (!carousel) return;
-            var targetCard = cards[index];
+            var targetCard = cards[index] as HTMLElement;
             if (!targetCard) return;
 
             var scrollOffset = targetCard.offsetLeft - carousel.offsetLeft;
@@ -303,101 +324,84 @@ const roles = [
             });
         }
 
-        function autoAdvance() {
-            if (!carousel || document.hidden || isUserInteracting) return;
+        function handleAutoAdvanceNext() {
+            if (document.hidden) return;
             var nextIndex = (activeIndex + 1) % cards.length;
             scrollToCard(nextIndex);
         }
 
-        function handleManualInteraction() {
-            console.log("[RolesCarousel] Manual interaction detected");
-            isUserInteracting = true;
-            if (interactionTimeout) clearTimeout(interactionTimeout);
-            stopAutoAdvance();
-
-            interactionTimeout = setTimeout(function () {
-                isUserInteracting = false;
-                startAutoAdvance();
-            }, 8000);
-        }
-
-        function startAutoAdvance() {
-            stopAutoAdvance();
-            if (
-                window.matchMedia &&
-                window.matchMedia("(prefers-reduced-motion: reduce)").matches
-            )
-                return;
-            autoAdvanceInterval = setInterval(autoAdvance, 5000);
-            console.log("[RolesCarousel] Auto-advance started");
-        }
-
-        function stopAutoAdvance() {
-            if (autoAdvanceInterval) {
-                clearInterval(autoAdvanceInterval);
-                autoAdvanceInterval = null;
-            }
-        }
-
-        // --- Event Listeners using event delegation for Safari ---
+        // --- Event Listeners ---
         if (carousel) {
             carousel.addEventListener(
                 "scroll",
                 function () {
+                    // Debounce usage of updateActiveFromScroll could be nice,
+                    // but immediate feedback is better for active state.
                     updateActiveFromScroll();
                 },
                 { passive: true },
             );
-
-            carousel.addEventListener("mousedown", handleManualInteraction);
-            carousel.addEventListener("touchstart", handleManualInteraction, {
-                passive: true,
-            });
-            carousel.addEventListener("wheel", handleManualInteraction, {
-                passive: true,
-            });
         }
 
-        // Click handlers for cards - using onclick for Safari compatibility
+        // Click handlers for cards
         for (var k = 0; k < cards.length; k++) {
-            (function (index) {
-                var card = cards[index];
-                card.onclick = function (e) {
+            (function (index: number) {
+                var card = cards[index] as HTMLElement;
+                card.addEventListener("click", function (e: MouseEvent) {
                     e.preventDefault();
                     console.log("[RolesCarousel] Card clicked:", index);
-                    handleManualInteraction();
+                    // Just scroll. No pause.
                     scrollToCard(index);
-                };
+                });
             })(k);
         }
 
         // Click handlers for indicators
         for (var m = 0; m < indicators.length; m++) {
-            (function (index) {
-                var indicator = indicators[index];
-                indicator.onclick = function (e) {
+            (function (index: number) {
+                var indicator = indicators[index] as HTMLElement;
+                indicator.addEventListener("click", function (e: MouseEvent) {
                     e.preventDefault();
                     console.log("[RolesCarousel] Indicator clicked:", index);
-                    handleManualInteraction();
+                    // Just scroll. No pause.
                     scrollToCard(index);
-                };
+                });
+
+                var fill = indicator.querySelector(
+                    ".indicator-fill",
+                ) as HTMLElement;
+                if (fill) {
+                    fill.addEventListener(
+                        "animationend",
+                        function (e: AnimationEvent) {
+                            e.stopPropagation();
+                            // Simple check: if this is the active one finishing, go next.
+                            // No user interaction checks.
+                            if (index === activeIndex) {
+                                console.log(
+                                    "[RolesCarousel] Animation complete. Advancing.",
+                                );
+                                handleAutoAdvanceNext();
+                            }
+                        },
+                    );
+                }
             })(m);
         }
 
-        // Back to start button
-        var backToStartBtn = document.getElementById("back-to-start");
+        var backToStartBtn = document.getElementById(
+            "back-to-start",
+        ) as HTMLElement;
         if (backToStartBtn) {
-            backToStartBtn.onclick = function (e) {
+            backToStartBtn.addEventListener("click", function (e: MouseEvent) {
                 e.preventDefault();
                 console.log("[RolesCarousel] Back to start clicked");
-                handleManualInteraction();
                 scrollToCard(0);
-            };
+            });
         }
 
         // Initialize
         updateActiveFromScroll();
-        startAutoAdvance();
         console.log("[RolesCarousel] Initialization complete");
     });
 </script>
@@ -430,5 +434,25 @@ const roles = [
         touch-action: manipulation;
         user-select: none;
         -webkit-user-select: none;
+    }
+
+    /* Animation Styles */
+    .indicator.active {
+        width: 6rem;
+    }
+
+    .indicator.active .indicator-fill {
+        animation: fillProgress 5s linear forwards;
+    }
+
+    /* No paused style needed anymore */
+
+    @keyframes fillProgress {
+        0% {
+            width: 0%;
+        }
+        100% {
+            width: 100%;
+        }
     }
 </style>
