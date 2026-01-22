@@ -1,0 +1,58 @@
+---
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["glass-card", "card-hover", className]}>
+    <slot />
+</div>
+
+<style>
+    .glass-card {
+        background: rgba(10, 10, 15, 0.75); /* More opaque for readability */
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: var(--radius-lg);
+        position: relative;
+        overflow: hidden;
+        transition:
+            transform var(--duration-normal) var(--ease-out),
+            box-shadow var(--duration-normal) var(--ease-out),
+            border-color var(--duration-normal) var(--ease-out);
+    }
+
+    /* Inner highlight for extra depth */
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1),
+            transparent 60%
+        );
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow:
+            var(--shadow-lg),
+            0 0 20px rgba(99, 102, 241, 0.1); /* Subtle indigo glow */
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+</style>

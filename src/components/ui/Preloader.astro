@@ -1,0 +1,131 @@
+---
+
+---
+
+<div id="preloader" class="preloader">
+    <div class="preloader-content">
+        <div class="logo-pulse">
+            <span class="logo-text">WILSEBBIS</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="status-text" id="status-text">Initializing Vitality...</div>
+    </div>
+</div>
+
+<script>
+    const preloader = document.getElementById("preloader");
+    const progressBar = document.getElementById("progress-bar");
+    const statusText = document.getElementById("status-text");
+
+    if (preloader && progressBar && statusText) {
+        // Simulate loading progress
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress > 100) progress = 100;
+
+            progressBar.style.width = `${progress}%`;
+
+            if (progress === 100) {
+                clearInterval(interval);
+                statusText.innerText = "System Ready";
+                setTimeout(() => {
+                    preloader.classList.add("loaded");
+                }, 500);
+            }
+        }, 200);
+
+        // Force load after window load or max timeout
+        window.addEventListener("load", () => {
+            // Accelerate progress to 100
+            progressBar.style.width = "100%";
+        });
+
+        // Final fallback
+        setTimeout(() => {
+            preloader.classList.add("loaded");
+        }, 5000);
+    }
+</script>
+
+<style>
+    .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--brand-deep);
+        z-index: 100; /* Highest z-index */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition:
+            opacity 0.8s var(--ease-out),
+            visibility 0.8s;
+    }
+
+    .preloader.loaded {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .preloader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+        width: 300px;
+    }
+
+    .logo-pulse {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--text-primary);
+        letter-spacing: -0.05em;
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    .progress-container {
+        width: 100%;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            var(--brand-indigo),
+            var(--brand-teal)
+        );
+        width: 0%;
+        transition: width 0.2s ease-out;
+    }
+
+    .status-text {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    @keyframes pulse {
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+    }
+</style>

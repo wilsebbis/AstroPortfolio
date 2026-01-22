@@ -1,29 +1,42 @@
 ---
-import Section from './Section.astro';
-import Card from './ui/Card.astro';
+import Section from "./Section.astro";
+import GlassCard from "./ui/GlassCard.astro";
 ---
 
 <Section id="about">
-    <div class="about-container">
+    <div class="about-container reveal">
         <div class="bio">
             <p>
-                I am a passionate Computer Science student with a deep focus on Artificial Intelligence and Machine Learning.
-                My journey involves exploring the depths of neural networks, natural language processing, and computer vision.
+                I am a passionate Computer Science student with a deep focus on
+                Artificial Intelligence and Machine Learning. My journey
+                involves exploring the depths of neural networks, natural
+                language processing, and computer vision.
             </p>
             <p>
-                I'm constantly building projects that push the boundaries of what's possible with code and data.
-                Currently exploring generative models and reinforcement learning.
+                I'm constantly building projects that push the boundaries of
+                what's possible with code and data. Currently exploring
+                generative models and reinforcement learning.
             </p>
         </div>
 
-        <Card class="tech-stack-card" glass={true}>
+        <GlassCard class="tech-stack-card">
             <h3>Tech Stack</h3>
             <div class="tags">
-                {['Python', 'PyTorch', 'TensorFlow', 'React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS'].map((tech) => (
-                    <span class="tag">{tech}</span>
-                ))}
+                {
+                    [
+                        "Python",
+                        "PyTorch",
+                        "TensorFlow",
+                        "React",
+                        "TypeScript",
+                        "Node.js",
+                        "PostgreSQL",
+                        "Docker",
+                        "AWS",
+                    ].map((tech) => <span class="tag">{tech}</span>)
+                }
             </div>
-        </Card>
+        </GlassCard>
     </div>
 </Section>
 
@@ -32,9 +45,14 @@ import Card from './ui/Card.astro';
         display: grid;
         grid-template-columns: 1fr;
         gap: var(--space-8);
-        padding: var(--space-8) var(--space-8);
+        padding: var(--space-8);
         max-width: 1200px;
         margin: 0 auto;
+        background: rgba(5, 5, 6, 0.6); /* Semi-transparent dark background */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     @media (min-width: 768px) {
@@ -45,8 +63,9 @@ import Card from './ui/Card.astro';
     }
 
     .bio {
-        color: var(--text-secondary);
+        color: var(--text-primary); /* Improved contrast */
         font-size: 1.1rem;
+        line-height: 1.7;
     }
 
     .bio p {

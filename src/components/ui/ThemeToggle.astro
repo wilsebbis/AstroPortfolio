@@ -1,0 +1,178 @@
+---
+
+---
+
+<div class="theme-toggle-wrapper">
+    <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+        <span class="sr-only">Toggle Theme</span>
+        <div class="icon-stack">
+            <!-- Sun (Light) -->
+            <svg
+                class="icon sun"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><circle cx="12" cy="12" r="5"></circle><path
+                    d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                ></path></svg
+            >
+
+            <!-- Moon (Dark) -->
+            <svg
+                class="icon moon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path></svg
+            >
+
+            <!-- System (Auto) -->
+            <svg
+                class="icon system"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><rect x="2" y="3" width="20" height="14" rx="2" ry="2"
+                ></rect><line x1="8" y1="21" x2="16" y2="21"></line><line
+                    x1="12"
+                    y1="17"
+                    x2="12"
+                    y2="21"></line></svg
+            >
+        </div>
+    </button>
+</div>
+
+<script>
+    const toggleBtn = document.getElementById("theme-toggle");
+
+    // State: 'light' | 'dark' | 'system'
+    // Cycle: system -> dark -> light -> system...
+
+    function getTheme() {
+        if (
+            typeof localStorage !== "undefined" &&
+            localStorage.getItem("theme")
+        ) {
+            return localStorage.getItem("theme");
+        }
+        return "system";
+    }
+
+    function setTheme(theme) {
+        // Update UI
+        const root = document.documentElement;
+
+        if (theme === "system") {
+            localStorage.removeItem("theme");
+            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                root.setAttribute("data-theme", "dark");
+            } else {
+                root.setAttribute("data-theme", "light");
+            }
+            toggleBtn?.setAttribute("data-state", "system");
+        } else {
+            localStorage.setItem("theme", theme);
+            root.setAttribute("data-theme", theme);
+            toggleBtn?.setAttribute("data-state", theme);
+        }
+    }
+
+    // Toggle Logic
+    toggleBtn?.addEventListener("click", () => {
+        const current = toggleBtn.getAttribute("data-state") || "system";
+        let next = "system";
+
+        if (current === "system") next = "dark";
+        else if (current === "dark") next = "light";
+        else if (current === "light") next = "system";
+
+        setTheme(next);
+    });
+
+    // Initialize state attribute on button
+    const saved = getTheme();
+    toggleBtn?.setAttribute("data-state", saved || "system");
+</script>
+
+<style>
+    .theme-toggle-wrapper {
+        position: fixed;
+        top: var(--space-4);
+        right: var(--space-4);
+        z-index: 100;
+        mix-blend-mode: difference; /* Ensure visibility on light/dark */
+    }
+
+    .theme-btn {
+        background: transparent;
+        border: 1px solid rgba(128, 128, 128, 0.3);
+        color: #fff; /* Difference blend mode handles contrast */
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease;
+        backdrop-filter: blur(4px);
+    }
+
+    .theme-btn:hover {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .icon-stack {
+        position: relative;
+        width: 20px;
+        height: 20px;
+    }
+
+    .icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transform: rotate(-90deg) scale(0.5);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* State Styles */
+    :global([data-state="light"]) .icon.sun {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+    }
+
+    :global([data-state="dark"]) .icon.moon {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+    }
+
+    :global([data-state="system"]) .icon.system {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+    }
+</style>

@@ -1,0 +1,133 @@
+---
+import Section from "./Section.astro";
+import GlassCard from "./ui/GlassCard.astro";
+
+interface CapabilityGroup {
+    title: string;
+    tools: string[];
+    hint: string;
+}
+
+const capabilities: CapabilityGroup[] = [
+    {
+        title: "Machine Learning",
+        tools: ["PyTorch", "TensorFlow", "Scikit-learn", "HuggingFace"],
+        hint: "Training pipelines & model serving",
+    },
+    {
+        title: "Backend Systems",
+        tools: ["Python", "Node.js", "PostgreSQL", "Redis"],
+        hint: "Scalable APIs & data processing",
+    },
+    {
+        title: "Infrastructure",
+        tools: ["AWS", "Docker", "Kubernetes", "Terraform"],
+        hint: "CI/CD & container orchestration",
+    },
+];
+---
+
+<Section id="capabilities">
+    <div class="capabilities-container">
+        <div class="section-header">
+            <h2 class="section-title">What I Build</h2>
+            <p class="section-subtitle">
+                End-to-end systems from model training to production deployment.
+            </p>
+        </div>
+
+        <div class="capabilities-grid">
+            {
+                capabilities.map((cap) => (
+                    <GlassCard class="capability-card">
+                        <h3 class="cap-title">{cap.title}</h3>
+                        <div class="tools-list">
+                            {cap.tools.map((tool, i) => (
+                                <span class="tool">
+                                    {tool}
+                                    {i < cap.tools.length - 1 && (
+                                        <span class="separator">•</span>
+                                    )}
+                                </span>
+                            ))}
+                        </div>
+                        <p class="cap-hint">{cap.hint}</p>
+                    </GlassCard>
+                ))
+            }
+        </div>
+    </div>
+</Section>
+
+<style>
+    .capabilities-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: var(--space-16) var(--space-8);
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: var(--space-12);
+    }
+
+    .section-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--space-3);
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 50ch;
+        margin: 0 auto;
+    }
+
+    .capabilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-6);
+    }
+
+    .capability-card {
+        padding: var(--space-8);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .cap-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--brand-teal);
+        margin: 0;
+    }
+
+    .tools-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .tool {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .separator {
+        color: var(--text-muted);
+    }
+
+    .cap-hint {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin: 0;
+        margin-top: auto;
+    }
+</style>

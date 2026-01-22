@@ -1,0 +1,42 @@
+---
+
+---
+
+<span class="kinetic-underline">
+    <slot />
+</span>
+
+<style>
+    .kinetic-underline {
+        position: relative;
+        display: inline-block;
+        /* Ensure no layout shift */
+        text-decoration: none;
+    }
+
+    .kinetic-underline::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0; /* Adjust as needed based on line-height */
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            var(--brand-indigo),
+            var(--brand-violet),
+            var(--brand-teal)
+        );
+        transition: width 0.6s var(--ease-elastic);
+        border-radius: 99px;
+    }
+
+    .kinetic-underline:hover::after {
+        width: 100%;
+    }
+
+    /* Optional: Trigger on parent group hover if useful */
+    :global(.group):hover .kinetic-underline::after {
+        width: 100%;
+    }
+</style>
