@@ -49,42 +49,36 @@ const roles = [
 ];
 ---
 
-<Section id="roles" class="py-24 overflow-hidden">
+<Section id="roles" class="py-24">
     <div class="max-w-7xl mx-auto px-8">
-        <div
-            class="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 items-center"
-        >
-            <!-- Left: Typewriter Section -->
-            <div class="space-y-6">
-                <h2 class="font-display text-4xl font-bold tracking-tight">
-                    Where I'm Strongest
-                </h2>
-                <div
-                    class="glass-card p-8 bg-accent-primary/5 border-accent-primary/20 min-h-[200px]"
+        <!-- Stacked layout for better carousel interaction -->
+        <div class="space-y-12">
+            <!-- Stack Display on the Left -->
+            <div
+                class="glass-card p-6 lg:p-8 bg-accent-primary/5 border-accent-primary/20 w-fit"
+            >
+                <p
+                    class="text-sm font-mono text-accent-primary mb-2 uppercase tracking-widest"
                 >
-                    <p
-                        class="text-sm font-mono text-accent-primary mb-2 uppercase tracking-widest"
-                    >
-                        Stack for this role:
-                    </p>
-                    <div
-                        id="typewriter-container"
-                        class="font-display text-2xl font-bold text-text-primary typewriter-cursor"
-                    >
-                    </div>
+                    Stack for this role:
+                </p>
+                <div
+                    id="typewriter-container"
+                    class="font-display text-xl lg:text-2xl font-bold text-text-primary typewriter-cursor"
+                >
                 </div>
             </div>
 
-            <!-- Right: Horizontal Carousel -->
-            <div class="relative group z-10">
+            <!-- Horizontal Carousel -->
+            <div class="relative -mx-8">
                 <div
                     id="roles-carousel"
-                    class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide no-scrollbar scroll-smooth relative z-10"
+                    class="flex gap-6 overflow-x-auto pb-8 px-8 snap-x snap-mandatory scrollbar-hide no-scrollbar scroll-smooth"
                 >
                     {
                         roles.map((role, index) => (
                             <div
-                                class="role-card flex-none w-[300px] sm:w-[320px] snap-start glass-card p-10 cursor-pointer group/card transition-all duration-500"
+                                class="role-card flex-none w-[280px] sm:w-[320px] lg:w-[380px] snap-start glass-card p-10 cursor-pointer group/card transition-all duration-500"
                                 data-index={index}
                                 data-skills={role.skills.join(", ")}
                                 tabindex="0"
@@ -104,12 +98,42 @@ const roles = [
                             </div>
                         ))
                     }
-                    <!-- Spacer to allow the last card to reach the left -->
-                    <div class="flex-none w-[80vw] pointer-events-none"></div>
+                    <!-- Back to Start Button -->
+                    <button
+                        id="back-to-start"
+                        class="flex-none w-[200px] snap-start glass-card p-10 cursor-pointer flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:border-accent-primary/50 hover:bg-accent-primary/5 group"
+                        aria-label="Back to start"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="text-text-secondary group-hover:text-accent-primary transition-colors"
+                        >
+                            <path d="m12 19-7-7 7-7"></path>
+                            <path d="M19 12H5"></path>
+                        </svg>
+                        <span
+                            class="font-display text-sm font-semibold text-text-secondary group-hover:text-accent-primary transition-colors"
+                        >
+                            Back to Start
+                        </span>
+                    </button>
+                    <!-- Spacer sized to allow last card to reach leftmost -->
+                    <div
+                        class="flex-none w-[calc(100vw-380px-200px-4rem)] lg:w-[calc(100vw-380px-200px-6rem)] pointer-events-none"
+                    >
+                    </div>
                 </div>
 
                 <!-- Indicators -->
-                <div class="flex gap-2 mt-4 justify-start px-4">
+                <div class="flex gap-2 mt-4 justify-start px-8">
                     {
                         roles.map((role, i) => (
                             <div
@@ -352,6 +376,17 @@ const roles = [
                     scrollToCard(index);
                 };
             })(m);
+        }
+
+        // Back to start button
+        var backToStartBtn = document.getElementById("back-to-start");
+        if (backToStartBtn) {
+            backToStartBtn.onclick = function (e) {
+                e.preventDefault();
+                console.log("[RolesCarousel] Back to start clicked");
+                handleManualInteraction();
+                scrollToCard(0);
+            };
         }
 
         // Initialize

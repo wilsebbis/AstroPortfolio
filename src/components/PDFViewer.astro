@@ -325,33 +325,41 @@ import Button from "./ui/Button.astro";
         fullscreenBtn: document.getElementById("toggle-fullscreen"),
     };
 
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+
     function renderPage(num: number) {
-        if (!pdfDoc || !ctx || !canvas) return;
+        if (!pdfDoc || !ctx || !canvas || !elements.wrapper) return;
         pageRendering = true;
 
         pdfDoc
             .getPage(num)
             .then(function (page: any) {
-                const updateScale = () => {
-                    const wrapperWidth =
-                        (elements.wrapper?.clientWidth || 800) - 48;
-                    const unscaledViewport = page.getViewport({ scale: 1 });
-                    const fitScale = Math.min(
-                        wrapperWidth / unscaledViewport.width,
-                        1.5,
-                    );
-                    return fitScale * scale;
-                };
+                // 1. Calculate how much we need to scale the PDF to fit the container width
+                const wrapperWidth = elements.wrapper.clientWidth - 48; // Account for padding
+                const unscaledViewport = page.getViewport({ scale: 1 });
+                const fitScale = Math.min(
+                    wrapperWidth / unscaledViewport.width,
+                    1.5,
+                );
 
-                const currentViewport = page.getViewport({
-                    scale: updateScale(),
-                });
-                canvas.height = currentViewport.height;
-                canvas.width = currentViewport.width;
+                // 2. Account for device pixel ratio (Retina screens)
+                // We scale the viewport itself, not just the canvas, for better text hinting
+                const dpr = window.devicePixelRatio || 1;
+                const viewport = page.getViewport({ scale: fitScale * dpr });
+
+                // 3. Set canvas dimensions to the high-res size
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                // 4. No need to set style.width/height manually if we use w-full h-auto in CSS.
+                // But we can ensure it doesn't overflow
+                canvas.style.width = "100%";
+                canvas.style.height = "auto";
 
                 const renderContext = {
                     canvasContext: ctx,
-                    viewport: currentViewport,
+                    viewport: viewport,
+                    // No transform needed if we scale the viewport directly
                 };
 
                 const renderTask = page.render(renderContext);
@@ -385,6 +393,14 @@ import Button from "./ui/Button.astro";
             renderPage(num);
         }
     }
+
+    // Handle Window Resize
+    window.addEventListener("resize", () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (pdfDoc) renderPage(pageNum);
+        }, 200);
+    });
 
     function onPrevPage() {
         if (pageNum <= 1) return;
