@@ -2,6 +2,7 @@
 import Section from "./Section.astro";
 import { Image } from "astro:assets";
 import profileImage from "../assets/profile.png";
+import evenCuterProfileImage from "../assets/even_cuter_profile.png";
 ---
 
 <Section class="hero-section">
@@ -9,11 +10,20 @@ import profileImage from "../assets/profile.png";
         <div class="hero-background"></div>
 
         <h1 class="hero-title">
-            Wil Bish<span class="image-container"
-                ><span class="sr-only">o</span><Image
+            Wil Bish<span class="image-container" id="profile-container"
+                ><span class="sr-only">o</span>
+                <Image
                     src={profileImage}
                     alt=""
-                    class="profile-image"
+                    class="profile-image main"
+                    format="webp"
+                    loading="eager"
+                    fetchpriority="high"
+                />
+                <Image
+                    src={evenCuterProfileImage}
+                    alt=""
+                    class="profile-image cute"
                     format="webp"
                     loading="eager"
                     fetchpriority="high"
@@ -34,6 +44,16 @@ import profileImage from "../assets/profile.png";
 </Section>
 
 <script>
+    // Handle profile image click/tap
+    const profileContainer = document.getElementById("profile-container");
+    if (profileContainer) {
+        profileContainer.addEventListener("click", (e) => {
+            // Prevent default behavior if any, though it's a span
+            e.preventDefault();
+            profileContainer.classList.toggle("clicked");
+        });
+    }
+
     const words = [
         "Machine Learning",
         "Artificial Intelligence",
@@ -137,14 +157,14 @@ import profileImage from "../assets/profile.png";
         height: 0.76em;
         margin: 0 0.02em;
         border-radius: 50%;
-        overflow: hidden;
         vertical-align: middle;
         position: relative;
         top: -0.08em; /* Adjusted to align with cap height precisely */
         flex-shrink: 0;
         background-color: #ffffff; /* Matches letter color to fill PNG transparency */
         border: none; /* Removed the ring */
-        opacity: 1;
+        cursor: pointer; /* Indicate interactivity */
+        -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
     }
 
     .sr-only {
@@ -166,6 +186,30 @@ import profileImage from "../assets/profile.png";
         object-fit: cover;
         object-position: center 60%; /* Shifted head up to show more shirt */
         transform: none; /* Removed scale to show more of the original image context */
+        border-radius: 50%;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-image.main {
+        position: relative;
+        z-index: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-image.cute {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        z-index: 2;
+    }
+
+    .image-container.clicked .profile-image.cute {
+        opacity: 1;
+    }
+
+    .image-container.clicked .profile-image.main {
+        opacity: 0;
     }
 
     .typing-container {
