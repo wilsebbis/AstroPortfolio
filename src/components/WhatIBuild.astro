@@ -14,19 +14,19 @@ import Section from "./Section.astro";
             >
                 Delivered <span
                     id="dynamic-outcome"
-                    class="inline transition-all duration-500 opacity-0 text-accent-primary"
-                ></span> for <span
+                    class="inline transition-all duration-500 opacity-0"></span> for
+                <span
                     id="dynamic-who"
-                    class="inline transition-all duration-500 opacity-0 text-accent-secondary"
-                ></span> by building <span
+                    class="inline transition-all duration-500 opacity-0"></span> by
+                building <span
                     id="dynamic-product"
-                    class="inline transition-all duration-500 opacity-0 text-accent-tertiary"
-                ></span> that <span
+                    class="inline transition-all duration-500 opacity-0"></span> that
+                <span
                     id="dynamic-proof"
-                    class="inline transition-all duration-500 opacity-0 text-accent-primary"
+                    class="inline transition-all duration-500 opacity-0"
                 ></span>. Built with <span
                     id="dynamic-stack"
-                    class="inline transition-all duration-500 opacity-0 text-accent-secondary"
+                    class="inline transition-all duration-500 opacity-0"
                 ></span>.
             </p>
         </div>
@@ -256,6 +256,23 @@ import Section from "./Section.astro";
     const proofEl = document.getElementById("dynamic-proof");
     const stackEl = document.getElementById("dynamic-stack");
 
+    // Colors from TechTicker
+    const colors = [
+        "#f472b6", // pink-400
+        "#c084fc", // purple-400
+        "#22d3ee", // cyan-400
+        "#818cf8", // indigo-400
+        "#34d399", // emerald-400
+        "#e879f9", // fuchsia-400
+        "#38bdf8", // sky-400
+        "#a78bfa", // violet-400
+    ];
+
+    function getRandomColors(count) {
+        const shuffled = [...colors].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+    }
+
     function updatePhrasing() {
         if (!outcomeEl || !whoEl || !productEl || !proofEl || !stackEl) return;
 
@@ -270,24 +287,29 @@ import Section from "./Section.astro";
         stackEl.classList.add("opacity-0");
 
         setTimeout(() => {
-            // Update content
+            // Get 5 random colors
+            const [c1, c2, c3, c4, c5] = getRandomColors(5);
+
+            // Update content and colors
             outcomeEl.textContent = outcome;
+            outcomeEl.style.color = c1;
             whoEl.textContent = who;
+            whoEl.style.color = c2;
             productEl.textContent = product;
+            productEl.style.color = c3;
             proofEl.textContent = proof;
+            proofEl.style.color = c4;
             stackEl.textContent = stack;
+            stackEl.style.color = c5;
 
             // Reset classes
             outcomeEl.className =
-                "inline transition-all duration-500 opacity-0 text-accent-primary";
-            whoEl.className =
-                "inline transition-all duration-500 opacity-0 text-accent-secondary";
+                "inline transition-all duration-500 opacity-0";
+            whoEl.className = "inline transition-all duration-500 opacity-0";
             productEl.className =
-                "inline transition-all duration-500 opacity-0 text-accent-tertiary";
-            proofEl.className =
-                "inline transition-all duration-500 opacity-0 text-accent-primary";
-            stackEl.className =
-                "inline transition-all duration-500 opacity-0 text-accent-secondary";
+                "inline transition-all duration-500 opacity-0";
+            proofEl.className = "inline transition-all duration-500 opacity-0";
+            stackEl.className = "inline transition-all duration-500 opacity-0";
 
             // Trigger reflow
             outcomeEl.offsetHeight;
