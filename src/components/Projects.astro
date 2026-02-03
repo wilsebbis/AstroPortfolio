@@ -18,6 +18,21 @@ const projects = [
         link: "/projects/failure-aware-ml",
     },
     {
+        title: "Security-Aware Internal API",
+        description:
+            "Internal API designed under hostile-input assumptions: least privilege, scoped authorization, abuse-aware rate limiting, and forensic-grade logging.",
+        outcome:
+            "Validated with adversarial test corpus proving resistance to privilege escalation, malformed input abuse, and log poisoning.",
+        proof: [
+            { label: "Tests", value: "32 passed" },
+            { label: "Coverage", value: "Adversarial" },
+            { label: "Abuse", value: "Escalating" },
+        ],
+        tags: ["Python", "FastAPI", "OAuth2/JWT", "Pydantic"],
+        github: "https://github.com/wilsebbis/security-aware-internal-API",
+        link: "/projects/security-aware-api",
+    },
+    {
         title: "Real-time Style Transfer",
         description:
             "Ported VGG-19 to NCNN for Android, applying INT8 quantization to achieve 24fps on Snapdragon 855 (vs 5fps baseline) with <2% perceptual loss (LPIPS).",

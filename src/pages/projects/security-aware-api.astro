@@ -1,0 +1,229 @@
+---
+import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
+
+const metrics = [
+    { label: "Tests", value: "32 passed" },
+    { label: "Coverage", value: "Adversarial" },
+    { label: "Abuse Model", value: "Escalating" },
+    { label: "Logging", value: "Forensic" },
+];
+---
+
+<ProjectDetailLayout
+    title="Security-Aware Internal API"
+    description="Internal API designed under hostile-input assumptions: least privilege, scoped authorization, abuse-aware rate limiting, and forensic-grade logging."
+    metrics={metrics}
+    github="https://github.com/wilsebbis/security-aware-internal-API"
+>
+    <h2>Why This Exists</h2>
+    <p>Most internal APIs fail because of false trust assumptions:</p>
+    <ul>
+        <li><strong>"Internal traffic is safe"</strong></li>
+        <li><strong>"OAuth token = trusted caller"</strong></li>
+        <li><strong>"Validation is for edge services"</strong></li>
+    </ul>
+    <p>
+        This project explicitly rejects those assumptions. Internal callers are
+        treated as <strong>potentially compromised</strong>, tokens as
+        <strong>capabilities</strong> (not identities), and malformed input as
+        <strong>intentional</strong>.
+    </p>
+
+    <h2>Threat Model</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">Threat</th>
+                    <th class="py-2 px-4">Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Compromised service</td>
+                    <td class="py-2 px-4">Stolen token from logs / memory</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Privilege confusion</td>
+                    <td class="py-2 px-4"
+                        >Service A uses token with broader scope than intended</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Input abuse</td>
+                    <td class="py-2 px-4"
+                        >Overlong payloads, type confusion, parser edge cases</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Automation abuse</td>
+                    <td class="py-2 px-4"
+                        >Retry storms, probing edge conditions</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Log poisoning</td>
+                    <td class="py-2 px-4"
+                        >Malicious input attempting log injection</td
+                    >
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Security Guarantees</h2>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-primary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-primary">Authorization</h3>
+        <ul class="!mb-0">
+            <li>
+                Every protected route enforces an <strong
+                    >explicit scope requirement</strong
+                >
+            </li>
+            <li>
+                No implicit privilege inheritance (e.g., <code>admin:users</code
+                > does not imply <code>read:users</code>)
+            </li>
+        </ul>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-secondary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-secondary">Validation</h3>
+        <ul class="!mb-0">
+            <li>
+                Request parsing is <strong>strict</strong>: unknown fields
+                rejected, no silent coercion
+            </li>
+            <li>
+                Field constraints (length/type/enums) enforced at the boundary
+            </li>
+            <li>ASCII-only checks where applicable (blocks homoglyph abuse)</li>
+        </ul>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-tertiary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-tertiary">Abuse Handling</h3>
+        <ul class="!mb-0">
+            <li>
+                Rate limits enforced <strong>per-token</strong> with route-level configuration
+            </li>
+            <li>
+                Malformed requests trigger <strong>escalating penalties</strong> and
+                eventual blocking
+            </li>
+            <li>Behavior recovery exists (penalties decay over time)</li>
+        </ul>
+    </div>
+
+    <div class="glass-card p-6 bg-white/5 border-l-4 border-green-500">
+        <h3 class="!mt-0 !mb-4 text-green-400">Forensic Logging</h3>
+        <ul class="!mb-0">
+            <li>
+                Security events are structured and sanitized for forensic use
+            </li>
+            <li>Token hash logged (never raw token)</li>
+            <li>
+                Abuse classification: <code>BENIGN</code>, <code>MALFORMED</code
+                >, <code>PROBING</code>, <code>ESCALATION_ATTEMPT</code>
+            </li>
+        </ul>
+    </div>
+
+    <h2>Architecture</h2>
+    <div class="glass-card p-6 bg-white/5 font-mono text-sm overflow-x-auto">
+        <pre
+            class="!m-0">Caller → Auth (JWT/scope) → Validation (strict) → Route guard → Rate limiter → Handler
+                                   ↘────────────── Security logger (structured) ─────↙</pre>
+    </div>
+
+    <h2>Adversarial Test Corpus</h2>
+    <p>
+        The project includes purpose-built test data to validate security
+        guarantees:
+    </p>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">File</th>
+                    <th class="py-2 px-4">Contents</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"><code>benign_requests.json</code></td>
+                    <td class="py-2 px-4"
+                        >Valid requests for baseline behavior</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"
+                        ><code>malformed_requests.json</code></td
+                    >
+                    <td class="py-2 px-4"
+                        >Type confusion, oversized payloads, unicode edge cases</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"
+                        ><code>privilege_escalation_attempts.json</code></td
+                    >
+                    <td class="py-2 px-4"
+                        >Missing scope, cross-resource access attempts</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"><code>rate_limit_abuse.json</code></td
+                    >
+                    <td class="py-2 px-4"
+                        >Retry storms, malformed-input penalty scenarios</td
+                    >
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>What This Signals</h2>
+    <ul>
+        <li>
+            <strong>Assume Breach, Not Perfection:</strong> Tests prove that
+            <em>internal ≠ trusted</em>, <em>tokens ≠ identity</em>, and
+            <em>malformed input ≠ accident</em>.
+        </li>
+        <li>
+            <strong>Capability-Based Security:</strong> Scope model explicitly rejects
+            "admin implies read/write everything."
+        </li>
+        <li>
+            <strong>Abuse as First-Class Signal:</strong> Escalating penalty logic
+            treats malformed inputs as stronger abuse signal than high volume.
+        </li>
+        <li>
+            <strong>Prove Claims with Tests:</strong> Adversarial corpus validates
+            resistance to privilege escalation, not just assertions.
+        </li>
+    </ul>
+
+    <h2>Known Limitations</h2>
+    <ul>
+        <li>
+            <strong>In-Process Rate Limiting:</strong> Not shared across replicas.
+            Production would use Redis or another shared backend.
+        </li>
+        <li>
+            <strong>No Centralized Policy Engine:</strong> Authorization is enforced
+            via code-level route dependencies, not OPA.
+        </li>
+        <li>
+            <strong>No Anomaly Detection:</strong> Rule-based abuse classification
+            only (intentionally out of scope).
+        </li>
+    </ul>
+</ProjectDetailLayout>
