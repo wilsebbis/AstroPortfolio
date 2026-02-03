@@ -2,7 +2,7 @@
 
 A modern, interactive portfolio showcasing production-grade ML systems, infrastructure projects, and full-stack engineering work.
 
-**Live:** [wilbishop.dev](https://wilbishop.dev)
+**Live:** [wilbishop.com](https://wilbishop.com)
 
 ---
 
