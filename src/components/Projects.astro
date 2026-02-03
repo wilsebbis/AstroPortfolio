@@ -33,6 +33,21 @@ const projects = [
         link: "/projects/security-aware-api",
     },
     {
+        title: "Constrained LLM Extraction Pipeline",
+        description:
+            "Fail-closed security incident normalization treating LLM output as untrusted text. Deterministic-first routing with strict schema validation and bounded recovery using OpenAI Structured Outputs.",
+        outcome:
+            "Demonstrated systems reliability approach: bypass LLM when possible, validate strictly, escalate on failure—never fabricate.",
+        proof: [
+            { label: "Tests", value: "65 passed" },
+            { label: "Mode", value: "Fail-closed" },
+            { label: "Path", value: "Deterministic" },
+        ],
+        tags: ["Python", "Pydantic v2", "OpenAI", "Regex"],
+        github: "https://github.com/wilsebbis/llm-extraction-pipeline",
+        link: "/projects/llm-extraction-pipeline",
+    },
+    {
         title: "Real-time Style Transfer",
         description:
             "Ported VGG-19 to NCNN for Android, applying INT8 quantization to achieve 24fps on Snapdragon 855 (vs 5fps baseline) with <2% perceptual loss (LPIPS).",

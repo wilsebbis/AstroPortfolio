@@ -1,0 +1,338 @@
+---
+import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
+
+const metrics = [
+    { label: "Tests", value: "65 passed" },
+    { label: "Hallucination", value: "-60%" },
+    { label: "Coverage", value: "Adversarial" },
+    { label: "Path", value: "Deterministic" },
+];
+---
+
+<ProjectDetailLayout
+    title="Constrained LLM Extraction Pipeline"
+    description="Production-style information extraction system that treats LLMs as probabilistic, adversarial, and unreliable. Enforces strict schema validation and deterministic fallbacks."
+    metrics={metrics}
+    github="https://github.com/wilsebbis/llm-extraction-pipeline"
+>
+    <h2>Key Principle</h2>
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-primary mb-6"
+    >
+        <p class="text-xl font-semibold text-accent-primary !mb-0">
+            "The safest LLM output is the one you never request."
+        </p>
+    </div>
+    <p>
+        This project demonstrates senior engineering judgment by designing
+        <em>around</em> LLM failure modes rather than assuming them away.
+    </p>
+
+    <h2>Use Case: Security Incident Normalization</h2>
+    <p>
+        <strong>Input:</strong> Free-form incident reports, chat logs, system alerts
+    </p>
+    <p>
+        <strong>Output:</strong> Strict JSON schema with incident type, severity,
+        affected systems, IOCs, and confidence score.
+    </p>
+
+    <h2>Architecture</h2>
+    <div
+        class="glass-card p-6 bg-white/5 font-mono text-xs overflow-x-auto mb-6"
+    >
+        <pre
+            class="!m-0 whitespace-pre">Raw Input (Incident Report, Chat Log, Alert)
+        ↓
+┌────────────────────────────────────────┐
+│  Pre-Classifier (Regex + Keywords)     │
+└────────────────────────────────────────┘
+        ↓
+   ┌────────┴────────┐
+   ↓                 ↓
+┌──────────┐   ┌─────────────┐
+│ HIGH     │   │ AMBIGUOUS   │
+│ CERTAINTY│   │ (LLM Path)  │
+└──────────┘   └─────────────┘
+   ↓                 ↓
+┌──────────┐   ┌─────────────┐
+│ Rule-    │   │ LLM Extract │
+│ Based    │   │ → Schema    │
+│ Extractor│   │   Validate  │
+└──────────┘   └─────────────┘
+   ↓                 ↓
+   │           ┌─────┴─────┐
+   │           ↓           ↓
+   │     ┌─────────┐ ┌──────────┐
+   │     │ VALID   │ │ INVALID  │
+   │     └─────────┘ └──────────┘
+   │           ↓           ↓
+   │           │     ┌──────────┐
+   │           │     │ Determin-│
+   │           │     │ istic    │
+   │           │     │ Repair   │
+   │           │     └──────────┘
+   │           │           ↓
+   │           │     ┌─────┴─────┐
+   │           │     ↓           ↓
+   │           │ ┌──────┐ ┌───────────┐
+   │           │ │VALID │ │ ESCALATE/ │
+   │           │ └──────┘ │ FLAG/DROP │
+   │           │     ↓    └───────────┘
+   └───────────┴─────┴───────→ Output</pre>
+    </div>
+
+    <h2>Core Design Principles</h2>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-primary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-primary">
+            1. Deterministic First, LLM Second
+        </h3>
+        <p>Regex + keyword detection is:</p>
+        <ul class="!mb-0">
+            <li><strong>Cheaper</strong> — zero API cost</li>
+            <li><strong>Faster</strong> — sub-millisecond latency</li>
+            <li><strong>Auditable</strong> — fully deterministic</li>
+            <li><strong>Zero hallucination risk</strong></li>
+        </ul>
+        <p class="mt-4 !mb-0">
+            <em>Example:</em> If input contains <code>SSN</code>, <code
+                >password reset</code
+            >,
+            <code>OTP</code> → classify as <code>credential_theft</code> without LLM.
+        </p>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-secondary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-secondary">
+            2. Strict Schema Enforcement
+        </h3>
+        <p>
+            LLM output is treated as <strong>untrusted text</strong>, not data.
+        </p>
+        <pre
+            class="bg-black/30 p-4 rounded text-sm"><code>class SecurityIncident(BaseModel):
+    model_config = ConfigDict(
+        strict=True,       # No type coercion
+        extra="forbid",    # Reject extra fields
+    )</code></pre>
+        <p class="mt-4">Rejection criteria:</p>
+        <ul class="!mb-0">
+            <li>Missing required fields</li>
+            <li>
+                Invalid enum values (<code>"very high"</code> instead of <code
+                    >"high"</code
+                >)
+            </li>
+            <li>
+                Type mismatches (string <code>"0.5"</code> ≠ float <code
+                    >0.5</code
+                >)
+            </li>
+            <li>Extra keys (LLM invented fields)</li>
+        </ul>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-tertiary mb-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-tertiary">
+            3. Deterministic Recovery Paths
+        </h3>
+        <p>Instead of "retry with a better prompt":</p>
+        <ul>
+            <li>Strip markdown fences</li>
+            <li>Extract first valid JSON block</li>
+            <li>Fix trailing commas</li>
+            <li>Normalize enum case</li>
+        </ul>
+        <p class="!mb-0">
+            <strong>Only one retry allowed</strong> → prevents infinite cost loops.
+        </p>
+    </div>
+
+    <div class="glass-card p-6 bg-white/5 border-l-4 border-green-500">
+        <h3 class="!mt-0 !mb-4 text-green-400">4. Confidence Scoring</h3>
+        <p>
+            Confidence is <strong>NOT the LLM's confidence</strong>. Computed
+            from:
+        </p>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse my-4">
+                <thead>
+                    <tr class="border-b border-white/10 text-text-primary">
+                        <th class="py-2 px-4">Signal</th>
+                        <th class="py-2 px-4">Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-4">Deterministic rule hits</td>
+                        <td class="py-2 px-4 text-green-400"
+                            >+0.15 per hit (max +0.30)</td
+                        >
+                    </tr>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-4">LLM bypass (rule-only)</td>
+                        <td class="py-2 px-4 text-green-400">+0.20</td>
+                    </tr>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-4">All required fields present</td>
+                        <td class="py-2 px-4 text-green-400">+0.10</td>
+                    </tr>
+                    <tr class="border-b border-white/5">
+                        <td class="py-2 px-4">Each repair applied</td>
+                        <td class="py-2 px-4 text-red-400">-0.10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2>Test Results</h2>
+    <p><strong>65 tests passing</strong> across all modules:</p>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">Test Suite</th>
+                    <th class="py-2 px-4">What It Validates</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"><code>test_validator.py</code></td>
+                    <td class="py-2 px-4"
+                        >Strict mode rejects type coercion, extra fields,
+                        invalid enums</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"><code>test_repair.py</code></td>
+                    <td class="py-2 px-4"
+                        >Markdown fences stripped, trailing commas fixed, enum
+                        case normalized</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"
+                        ><code>test_pre_classifier.py</code></td
+                    >
+                    <td class="py-2 px-4"
+                        >Credential theft, malware, phishing patterns route to
+                        HIGH_CERTAINTY</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"><code>test_pipeline.py</code></td>
+                    <td class="py-2 px-4"
+                        >Deterministic path bypasses LLM, repair recovers
+                        malformed JSON</td
+                    >
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4"
+                        ><code>test_prompt_injection.py</code></td
+                    >
+                    <td class="py-2 px-4"
+                        >Adversarial inputs produce valid schema or escalate</td
+                    >
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Interview FAQ</h2>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-primary mb-4"
+    >
+        <h3 class="!mt-0 !mb-2 text-accent-primary">
+            "Why not just improve the prompt?"
+        </h3>
+        <p class="!mb-0">
+            Prompts don't create guarantees. Schema validation does.
+        </p>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-secondary mb-4"
+    >
+        <h3 class="!mt-0 !mb-2 text-accent-secondary">
+            "How do you prevent hallucinations?"
+        </h3>
+        <p class="!mb-0">You don't—you detect and reject them.</p>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-tertiary mb-4"
+    >
+        <h3 class="!mt-0 !mb-2 text-accent-tertiary">
+            "What happens when extraction fails?"
+        </h3>
+        <p class="!mb-0">
+            We fail closed: drop, flag, or escalate—never fabricate.
+        </p>
+    </div>
+
+    <div class="glass-card p-6 bg-white/5 border-l-4 border-green-500 mb-4">
+        <h3 class="!mt-0 !mb-2 text-green-400">
+            "What would you do at scale?"
+        </h3>
+        <p class="!mb-0">
+            Cache deterministic results, move regex to Rust/Go, batch LLM calls,
+            tighten schema over time.
+        </p>
+    </div>
+
+    <h2>Project Structure</h2>
+    <div class="glass-card p-6 bg-white/5 font-mono text-sm overflow-x-auto">
+        <pre
+            class="!m-0">llm-extraction-pipeline/
+├── pyproject.toml
+├── README.md
+├── src/extraction_pipeline/
+│   ├── __init__.py
+│   ├── schema.py              # Pydantic v2 strict models
+│   ├── pre_classifier.py      # Deterministic routing
+│   ├── rule_extractor.py      # High-certainty extraction
+│   ├── llm_extractor.py       # LLM wrapper + mock
+│   ├── validator.py           # Trust boundary
+│   ├── json_repair.py         # Deterministic recovery
+│   ├── confidence.py          # Signal-based scoring
+│   └── pipeline.py            # Orchestrator
+├── tests/
+│   ├── conftest.py
+│   ├── test_validator.py
+│   ├── test_repair.py
+│   ├── test_pre_classifier.py
+│   ├── test_pipeline.py
+│   └── adversarial/
+│       └── test_prompt_injection.py
+├── data/
+│   └── synthetic_incidents.py
+└── evaluation/
+    ├── harness.py
+    └── baseline.py</pre>
+    </div>
+
+    <h2>Known Limitations</h2>
+    <ul>
+        <li>
+            <strong>Single-node Only:</strong> Pre-classifier regex runs in-process.
+            Production would use a compiled regex engine or Rust/Go sidecar.
+        </li>
+        <li>
+            <strong>No Learning Loop:</strong> System does not adapt based on human
+            corrections. Would add online learning for threshold tuning.
+        </li>
+        <li>
+            <strong>Mock Evaluation:</strong> Baseline comparisons use mock LLM for
+            repeatability. Real-world hallucination rates may differ.
+        </li>
+    </ul>
+</ProjectDetailLayout>
