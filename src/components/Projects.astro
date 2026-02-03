@@ -3,6 +3,21 @@ import Section from "./Section.astro";
 
 const projects = [
     {
+        title: "Failure-Aware ML System",
+        description:
+            "High-recall, failure-aware classification for regulated environments. Cascade architecture with Logistic Regression gatekeeper + XGBoost specialist, plus dynamic thresholding for distribution shift detection.",
+        outcome:
+            "Achieved 98%+ System Recall while automating 67% of decisions, reducing manual review by 68% compared to baseline.",
+        proof: [
+            { label: "Recall", value: "98.7%" },
+            { label: "Automation", value: "67.2%" },
+            { label: "Scale", value: "1.3M records" },
+        ],
+        tags: ["Python", "XGBoost", "scikit-learn", "Lending Club"],
+        github: "https://github.com/wilsebbis/failure-aware-ml-system",
+        link: "/projects/failure-aware-ml",
+    },
+    {
         title: "Real-time Style Transfer",
         description:
             "Ported VGG-19 to NCNN for Android, applying INT8 quantization to achieve 24fps on Snapdragon 855 (vs 5fps baseline) with <2% perceptual loss (LPIPS).",

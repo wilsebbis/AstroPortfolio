@@ -1,0 +1,176 @@
+---
+import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
+
+const metrics = [
+    { label: "System Recall", value: "98.7%" },
+    { label: "Automation", value: "67.2%" },
+    { label: "Review Reduction", value: "68%" },
+    { label: "Scale", value: "1.3M records" },
+];
+---
+
+<ProjectDetailLayout
+    title="Failure-Aware ML System"
+    description="Production-validated risk engine with high-recall, failure-aware classification designed for regulated environments like Credit Risk and Fraud Detection."
+    metrics={metrics}
+    github="https://github.com/wilsebbis/failure-aware-ml-system"
+>
+    <h2>Problem & Constraints</h2>
+    <p>
+        Standard Kaggle solutions maximize ROC-AUC but ignore the
+        <strong>operational bottleneck</strong>: manual review volume. In
+        regulated environments (fintech, fraud), missing a high-risk case (False
+        Negative) is catastrophic. Meanwhile, flagging too many cases for human
+        review makes the system economically unviable.
+    </p>
+    <p>
+        The challenge: <strong>minimize False Negatives</strong> while keeping manual
+        review load manageable—solving for both safety and operational cost.
+    </p>
+
+    <h2>Approach: Cascade Architecture</h2>
+    <p>
+        I realized a single model was trying to learn "easy" and "hard" patterns
+        simultaneously. The solution was a two-stage pipeline:
+    </p>
+    <ul>
+        <li>
+            <strong>Stage 1 (Gatekeeper):</strong> A high-recall, explainable Logistic
+            Regression. It aggressively filters "Obvious Safe" cases.
+            <br /><em>Lending Club Result:</em> Filtered 65.6% of volume immediately.
+            <br /><em>IEEE-CIS Fraud Result:</em> Filtered 96.4% of volume immediately.
+        </li>
+        <li>
+            <strong>Stage 2 (Specialist):</strong> A calibrated XGBoost model trained
+            <em>only</em> on the residual "Hard Cases." This improved the model's
+            ability to separate gray-zone risk.
+        </li>
+    </ul>
+
+    <h2>Dynamic Safety Valves</h2>
+    <p>
+        Fraud attacks come in bursts. Static thresholds fail when the
+        environment changes. I implemented <strong
+            >Rolling Quantile Thresholding</strong
+        >:
+    </p>
+    <ul>
+        <li>
+            <strong>Stable Environment (Lending Club):</strong> System detected 0.29%
+            drift. Thresholds remained stable, maximizing throughput.
+        </li>
+        <li>
+            <strong>Attack Scenario (IEEE-CIS):</strong> System detected a
+            <strong>2.05% confidence drop</strong>. Dynamic logic automatically
+            tightened the Pass Threshold, prioritizing safety over automation
+            until the shift stabilized.
+        </li>
+    </ul>
+
+    <h2>Performance by Domain</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse my-6">
+            <thead>
+                <tr class="border-b border-white/10 text-text-primary">
+                    <th class="py-2 px-4">Dataset</th>
+                    <th class="py-2 px-4">Challenge</th>
+                    <th class="py-2 px-4">Automation</th>
+                    <th class="py-2 px-4">System Recall</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Lending Club</td>
+                    <td class="py-2 px-4">Big Data (1.3M rows)</td>
+                    <td class="py-2 px-4 text-green-400 font-semibold">67.2%</td
+                    >
+                    <td class="py-2 px-4">98.7%</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">IEEE-CIS</td>
+                    <td class="py-2 px-4">Fraud (3.5% Target)</td>
+                    <td class="py-2 px-4 text-green-400 font-semibold">90.0%</td
+                    >
+                    <td class="py-2 px-4">98.4%</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                    <td class="py-2 px-4">Home Credit</td>
+                    <td class="py-2 px-4">Complex (Sub-prime)</td>
+                    <td class="py-2 px-4 text-yellow-400">75.5%</td>
+                    <td class="py-2 px-4">96.6%</td>
+                </tr>
+                <tr class="bg-orange-500/10 border-l-2 border-orange-500">
+                    <td class="py-2 px-4">UCI Credit</td>
+                    <td class="py-2 px-4">Noisy (22% Default)</td>
+                    <td class="py-2 px-4 text-orange-400">29.9%</td>
+                    <td class="py-2 px-4">97.7%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Postmortem: What I Learned</h2>
+    <div class="glass-card p-6 bg-white/5 border-l-4 border-accent-secondary">
+        <h3 class="!mt-0 !mb-4 text-accent-secondary">The Review Bottleneck</h3>
+        <p>
+            <strong>Finding:</strong> In the Home Credit dataset, a single model flagged
+            76% of users for review—operationally unacceptable.
+        </p>
+        <p>
+            <strong>Fix:</strong> The Cascade approach reduced this to 24.1% by trusting
+            the Gatekeeper for low-risk applicants. This turns a "broken" system into
+            a deployable one.
+        </p>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-tertiary mt-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-tertiary">
+            The Noisy Dataset Limit
+        </h3>
+        <p>
+            <strong>Finding:</strong> On UCI Credit, despite best efforts, the review
+            rate remained high (57.7%).
+        </p>
+        <p>
+            <strong>Root Cause:</strong> When the base default rate is 22% and features
+            are weak, there is an "Irreducible Error." No model can safely auto-approve
+            more than 30% without taking massive risks. The system correctly identified
+            this limit and <em>refused to guess</em>.
+        </p>
+    </div>
+
+    <div
+        class="glass-card p-6 bg-white/5 border-l-4 border-accent-primary mt-4"
+    >
+        <h3 class="!mt-0 !mb-4 text-accent-primary">Engineering Highlights</h3>
+        <p>
+            <strong>Inference Latency:</strong> The architecture processed 1.3 million
+            rows with minimal latency because 65% of inferences used only the lightweight
+            Gatekeeper model (Matrix Multiplication) rather than the heavy XGBoost
+            (Tree Traversal).
+        </p>
+        <p>
+            <strong>Feature Signal:</strong> Ratio-based feature engineering (e.g.,
+            <code>RATIO_DTI_UTILIZATION</code>) was critical for the Home Credit
+            model to separate sub-prime risk and reach >96% System Recall.
+        </p>
+    </div>
+
+    <h2>What I'd Do Next</h2>
+    <ul>
+        <li>
+            Implement <strong>Global Rate Limiting</strong> with CRDTs for multi-region
+            fraud detection consistency.
+        </li>
+        <li>
+            Add <strong>Online Learning</strong> to adapt thresholds in real-time
+            as concept drift is detected.
+        </li>
+        <li>
+            Deploy as a <strong>Feature Store</strong> integration for real-time production
+            risk scoring.
+        </li>
+    </ul>
+</ProjectDetailLayout>
