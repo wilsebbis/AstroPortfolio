@@ -2,16 +2,16 @@
 import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
 
 const metrics = [
-    { label: "Tests", value: "65 passed" },
-    { label: "Hallucination", value: "-60%" },
-    { label: "Coverage", value: "Adversarial" },
+    { label: "Tests", value: "65 passing" },
+    { label: "Contract", value: "JSON Schema" },
+    { label: "Mode", value: "Fail-closed" },
     { label: "Path", value: "Deterministic" },
 ];
 ---
 
 <ProjectDetailLayout
     title="Constrained LLM Extraction Pipeline"
-    description="Production-style information extraction system that treats LLMs as probabilistic, adversarial, and unreliable. Enforces strict schema validation and deterministic fallbacks."
+    description="Fail-closed incident normalization: deterministic-first routing, schema-validated Structured Outputs, bounded recovery, and escalation on invalid outputs."
     metrics={metrics}
     github="https://github.com/wilsebbis/llm-extraction-pipeline"
 >
@@ -27,6 +27,14 @@ const metrics = [
         This project demonstrates senior engineering judgment by designing
         <em>around</em> LLM failure modes rather than assuming them away.
     </p>
+
+    <h2>Trust Boundary</h2>
+    <div class="glass-card p-6 bg-white/5 border-l-4 border-red-500 mb-6">
+        <p class="text-lg font-semibold text-red-400 !mb-0">
+            A record is considered data only after it passes Pydantic strict
+            validation; otherwise it is untrusted text.
+        </p>
+    </div>
 
     <h2>Use Case: Security Incident Normalization</h2>
     <p>
@@ -158,9 +166,11 @@ const metrics = [
     <div class="glass-card p-6 bg-white/5 border-l-4 border-green-500">
         <h3 class="!mt-0 !mb-4 text-green-400">4. Confidence Scoring</h3>
         <p>
-            Confidence is <strong>NOT the LLM's confidence</strong>. Computed
-            from:
+            The model is <strong>not permitted to output confidence</strong>;
+            confidence is computed deterministically from routing, repairs, and
+            rule hits.
         </p>
+        <p>Computed from:</p>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse my-4">
                 <thead>
