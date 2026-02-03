@@ -158,19 +158,31 @@ const metrics = [
         </p>
     </div>
 
-    <h2>What I'd Do Next</h2>
+    <h2>Production Roadmap</h2>
+    <p>
+        While this project validates the core decisioning logic on historical
+        data, a live production deployment would require the following
+        infrastructure:
+    </p>
     <ul>
         <li>
-            Implement <strong>Global Rate Limiting</strong> with CRDTs for multi-region
-            fraud detection consistency.
+            <strong>Global State Management:</strong> To handle distributed fraud
+            attacks across multiple regions (e.g., US-East vs. EU-West), I would implement
+            CRDTs (G-Counters) for rate limiting. This ensures eventual consistency
+            for velocity checks without incurring cross-region locking latency.
         </li>
         <li>
-            Add <strong>Online Learning</strong> to adapt thresholds in real-time
-            as concept drift is detected.
+            <strong>Feature Serving Layer:</strong> To eliminate training-serving
+            skew, I would migrate the <code>RATIO_</code> feature definitions to a
+            Feature Store (e.g., Feast). This guarantees that the ratios calculated
+            during batch training match the real-time inference inputs exactly.
         </li>
         <li>
-            Deploy as a <strong>Feature Store</strong> integration for real-time production
-            risk scoring.
+            <strong>Adaptive Feedback Loop:</strong> The current architecture uses
+            batch retraining. In production, I would add an Online Learning sidecar
+            (using River or Vowpal Wabbit) to ingest label feedback from human reviewers
+            immediately, allowing the system to adapt to new fraud vectors within
+            minutes rather than weeks.
         </li>
     </ul>
 </ProjectDetailLayout>
