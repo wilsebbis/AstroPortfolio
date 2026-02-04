@@ -95,16 +95,16 @@ const projects = [
     {
         title: "Distributed Rate Limiter",
         description:
-            "Sliding window rate limiter using Redis Lua scripts for atomic precision. Designed for write-heavy loads with explicit scale failure handling.",
+            "Sliding window rate limiter using atomic Redis Lua + local hot-key shield for write-heavy loads with explicit failure handling.",
         outcome:
-            "Protected backend from 50k QPS 'hot key' spikes with <2ms added latency. 0% false positives.",
+            "Verified: p99 0.27ms added latency @ 10k QPS; no over-admissions observed (adversarial single-key flood).",
         proof: [
-            { label: "Throughput", value: "100k QPS" },
-            { label: "Latency", value: "p99 < 2ms" },
-            { label: "Scale", value: "Fail-open" },
+            { label: "Added Latency", value: "p99 0.27ms" },
+            { label: "Throughput", value: "10k verified" },
+            { label: "Target", value: "100k QPS" },
         ],
-        tags: ["Redis", "Lua", "Go", "System Design"],
-        github: "#",
+        tags: ["Redis", "Lua", "Go", "Ristretto", "Prometheus"],
+        github: "https://github.com/wilsebbis/distributed-api-rate-limiter",
         link: "/projects/distributed-rate-limiter",
     },
 ];

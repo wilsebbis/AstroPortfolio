@@ -2,54 +2,96 @@
 import ProjectDetailLayout from "../../layouts/ProjectDetailLayout.astro";
 
 const metrics = [
-    { label: "Latency", value: "p99 < 2ms" },
-    { label: "Throughput", value: "100k QPS" },
-    { label: "False Positives", value: "0%" },
-    { label: "Availability", value: "99.99%" },
+    { label: "Added Latency", value: "p99 0.27ms" },
+    { label: "Throughput", value: "10k QPS (verified)" },
+    { label: "Correctness", value: "No over-admissions (flood test)" },
+    { label: "Availability", value: "Fail-open" },
 ];
 ---
 
 <ProjectDetailLayout
     title="Distributed API Rate Limiter"
-    description="High-performance sliding window rate limiter designed for strict SLA enforcement across distributed microservices."
+    description="High-performance distributed sliding-window rate limiter for strict SLA enforcement across microservices. Uses atomic Redis Lua for correctness under concurrency, with local hot-key shielding and explicit fail-open behavior."
     metrics={metrics}
-    github="#"
+    github="https://github.com/wilsebbis/distributed-api-rate-limiter"
 >
     <h2>Problem & Constraints</h2>
     <p>
-        A multi-tenant SaaS API was suffering from "thundering herd" issues
-        where misconfigured client retry loops would saturate backend capacity,
-        affecting healthy tenants. The requirement was to enforce per-key rate
-        limits with <strong>microsecond-level precision</strong> while adding negligible
-        latency (&lt; 5ms) to the request path.
+        A multi-tenant SaaS API experienced thundering herd behavior:
+        misconfigured client retry loops saturated shared backend capacity,
+        degrading service for healthy tenants.
+    </p>
+    <p>
+        <strong>Requirement:</strong> Enforce per-key rate limits with sub-5ms p99
+        added latency on the request path, with atomic correctness under concurrency
+        and explicit behavior when Redis is slow/unavailable.
     </p>
 
     <h2>Approach: "Boring" Reliability</h2>
+    <p>Prioritized simple, proven primitives to minimize failure modes.</p>
+
+    <h3>Algorithm: Dual-Counter Sliding Window (Redis Strings)</h3>
     <p>
-        I prioritized simple, proven infrastructure components to minimize
-        failure modes.
+        Chosen over fixed windows to eliminate the window-edge burst
+        vulnerability (2× traffic at boundaries). Implemented sliding semantics
+        using
+        <strong
+            >two counters (current + previous) with weighted interpolation</strong
+        >—O(1) operations per request, write-heavy friendly, and TTL-bound.
     </p>
-    <ul>
+
+    <h3>Atomicity: Redis Lua (Single Script)</h3>
+    <p>
+        Encapsulated check + increment + TTL logic in one Lua script executed
+        atomically on Redis—eliminates TOCTOU races without distributed locks.
+    </p>
+
+    <h3>Three-Tier Decision Flow</h3>
+    <ol>
         <li>
-            <strong>Algorithm:</strong> Sliding Window Counter (Redis Sorted Sets).
-            Chosen over Fixed Window to avoid "window edge" spikes where 2x traffic
-            could slip through.
+            <strong>Tier 1: Local cache</strong> (Ristretto, 1s TTL) — caches BLOCKED
+            keys to reject at the edge with 0ms and 0 Redis load
         </li>
         <li>
-            <strong>Implementation:</strong> Encapsulated logic in a single <strong
-                >Lua script</strong
-            > executed atomically on Redis. This prevents "check-then-set" race conditions
-            without the overhead of distributed locks.
+            <strong>Tier 2: Redis Lua</strong> — authoritative atomic decision
         </li>
         <li>
-            <strong>Fallback:</strong> Implemented a "fail-open" strategy. If Redis
-            becomes unreachable, the sidecar allows traffic to pass to preserve availability
-            over protection.
+            <strong>Tier 3: Fail-open</strong> — if Redis unreachable, allow traffic
+            to preserve availability (with circuit breaker + metrics)
         </li>
-    </ul>
+    </ol>
+
+    <h2>Verified Load Test Results</h2>
+    <p class="text-text-secondary text-sm mb-4">
+        10k QPS, single-key adversarial flood
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card p-4 text-center">
+            <p class="text-2xl font-bold text-accent-primary">53µs</p>
+            <p class="text-xs text-text-secondary">p50 added latency</p>
+        </div>
+        <div class="glass-card p-4 text-center">
+            <p class="text-2xl font-bold text-accent-primary">274µs</p>
+            <p class="text-xs text-text-secondary">p99 added latency</p>
+        </div>
+        <div class="glass-card p-4 text-center">
+            <p class="text-2xl font-bold text-accent-primary">31ms</p>
+            <p class="text-xs text-text-secondary">max (single outlier)</p>
+        </div>
+        <div class="glass-card p-4 text-center">
+            <p class="text-2xl font-bold text-accent-primary">10k</p>
+            <p class="text-xs text-text-secondary">QPS sustained</p>
+        </div>
+    </div>
+    <p>
+        <strong>Behavior:</strong> With a single hot key and a strict per-minute limit,
+        requests were admitted up to the configured limit and then consistently rejected
+        with 429, with <strong>no over-limit admissions observed</strong>
+        during the run.
+    </p>
 
     <h2>Scale Boundaries</h2>
-    <p>Explicitly defined performance cliffs based on load testing:</p>
+    <p>Explicitly defined performance cliffs to guide the next scaling step:</p>
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse my-6">
             <thead>
@@ -62,15 +104,14 @@ const metrics = [
                 <tr class="border-b border-white/5">
                     <td class="py-2 px-4">&lt; 100k QPS</td>
                     <td class="py-2 px-4"
-                        ><strong>Comfortable.</strong> p99 latency &lt; 2ms. Single
-                        Redis node CPU &lt; 40%.</td
+                        ><strong>Design target:</strong> p99 added latency &lt; 2ms.</td
                     >
                 </tr>
                 <tr class="border-b border-white/5">
                     <td class="py-2 px-4">100k - 400k QPS</td>
                     <td class="py-2 px-4"
-                        ><strong>Strained.</strong> Redis network I/O becomes saturated.
-                        Latency jitter increases to 5-10ms.</td
+                        ><strong>Strained.</strong> Redis network I/O saturation,
+                        latency jitter rises.</td
                     >
                 </tr>
                 <tr class="bg-red-500/10 border-l-2 border-red-500">
@@ -86,60 +127,58 @@ const metrics = [
         </table>
     </div>
     <p>
-        <strong>Next Scale Step:</strong> To scale beyond 500k QPS, I would implement
-        <strong>client-side token buffering</strong> (local accumulation) to reduce
-        network round-trips, or shard Redis by API key hash.
+        <strong>Next Scale Step:</strong> Reduce Redis round-trips via
+        <strong>client-side token buffering</strong>, and/or shard Redis by API
+        key hash (Redis Cluster).
     </p>
 
-    <h2>Postmortem: The "Hot Key" Incident</h2>
+    <h2>Postmortem: "Hot Key" Incident</h2>
     <div class="glass-card p-6 bg-white/5 border-l-4 border-accent-secondary">
         <h3 class="!mt-0 !mb-4 text-accent-secondary">Incident #L4-2024-03</h3>
         <p>
-            <strong>Something failed:</strong> A single customer deployed a bug causing
-            a tight loop of 50k requests/sec. Because all logic ran on one Redis primary,
-            this "hot key" starved resource availability for other tenants.
+            <strong>What failed:</strong> A single tenant deployed a bug causing a
+            tight loop (tens of thousands req/s) on one key. With no local protection,
+            every request still hit Redis—even when Redis had already blocked the
+            key—creating avoidable load and starving other tenants.
         </p>
         <p>
-            <strong>What I learned:</strong> Lack of Tier 1 (local memory) caching
-            meant every request hit Redis, even for keys that were already blocked
-            in the previous millisecond. Distributed systems need local protection.
-        </p>
-        <p>
-            <strong>What I changed:</strong> Added a short-lived (1 second) local
-            cache using
-            <code>Ristretto</code> (Go) on the API Gateway to reject blocked keys
-            at the edge.
+            <strong>What changed:</strong> Added Tier-1 local blocked-key caching
+            (Ristretto, 1s TTL):
         </p>
         <ul class="!mb-0">
             <li>
-                If a key is blocked by Redis, cache <code>BLOCKED</code> status locally.
+                If Redis blocks a key, cache <code>BLOCKED</code> status locally.
             </li>
             <li>
                 Subsequent requests are rejected at the edge (0ms latency, 0
                 Redis load).
             </li>
+            <li>
+                Hot keys stop amplifying Redis load and no longer crowd out
+                healthy tenants.
+            </li>
         </ul>
     </div>
 
     <details>
-        <summary>Engineering Notes: Write vs Read Heavy</summary>
+        <summary>Engineering Notes: Write-Heavy Workload</summary>
         <p>
-            Rate limiting is a <strong>write-heavy</strong> workload (every check
-            is a write/update). Optimizing for write throughput meant disabling expensive
-            Redis durability features (AOF fsync every sec) since rate limit data
-            is ephemeral and data loss is acceptable.
+            Rate limiting is inherently <strong>write-heavy</strong> (each check updates
+            counters). The design treats rate-limit state as ephemeral and TTL-bound,
+            optimizing for throughput and tail latency rather than durability.
         </p>
     </details>
 
     <h2>What I'd Do Next</h2>
     <ul>
         <li>
-            Implement Global Rate Limiting using CRDTs (Redis Enterprise
-            active-active) for multi-region support.
+            <strong>Multi-region global rate limiting</strong> via CRDT/active-active
+            (e.g., Redis Enterprise) for consistent enforcement across regions.
         </li>
         <li>
-            Add adaptive concurrency limits (Little's Law) based on backend
-            latency signals.
+            <strong>Adaptive concurrency limits</strong> (Little's Law) driven by
+            backend latency signals (complements rate limiting; different control
+            loop).
         </li>
     </ul>
 </ProjectDetailLayout>
