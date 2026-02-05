@@ -19,115 +19,115 @@ import Section from "./Section.astro";
             <h2
                 class="font-display text-3xl md:text-5xl font-bold tracking-tight mb-6"
             >
-                Case Study: Model Iteration Platform
+                Case Study: Failure-Aware ML System
             </h2>
             <p class="text-lg text-text-secondary leading-relaxed">
-                How I built an end-to-end training & evaluation pipeline in 4
-                weeks, reducing model iteration time from days to minutes.
+                How I built a cost-sensitive classification pipeline that
+                reduced manual review by 68% while maintaining &gt;96% recall on
+                high-risk outcomes.
             </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <!-- Timeline -->
             <div class="space-y-8">
-                <!-- Week 1 -->
+                <!-- Phase 1 -->
                 <div class="relative pl-8 border-l border-white/10">
                     <div
                         class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-accent-tertiary"
                     >
                     </div>
                     <h3 class="font-display text-xl font-bold mb-2">
-                        Week 1: Baseline & Instrumentation
+                        Phase 1: Problem Framing & Data
                     </h3>
                     <p class="text-text-secondary text-sm leading-relaxed mb-4">
-                        Defined specific KPIs (latency &lt; 50ms, accuracy >
-                        90%). Set up basic logging and reproduced the SOTA paper
-                        baseline.
+                        Framed the problem as asymmetric loss optimization, not
+                        accuracy. Loaded 1.3M Lending Club records with
+                        stratified train/val/test splits.
                     </p>
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >MLflow Setup</span
+                            >pandas</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >DVC Init</span
+                            >scikit-learn</span
                         >
                     </div>
                 </div>
 
-                <!-- Week 2 -->
+                <!-- Phase 2 -->
                 <div class="relative pl-8 border-l border-white/10">
                     <div
                         class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-accent-secondary"
                     >
                     </div>
                     <h3 class="font-display text-xl font-bold mb-2">
-                        Week 2: Training Harness
+                        Phase 2: Cascade Architecture
                     </h3>
                     <p class="text-text-secondary text-sm leading-relaxed mb-4">
-                        Built a modular training loop decoupled from data
-                        loading. Implemented spot instance orchestration to cut
-                        cloud costs by 60%.
+                        Built two-stage inference: Logistic Regression
+                        gatekeeper for fast "easy" decisions, XGBoost specialist
+                        for uncertain cases.
                     </p>
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >Ray Tune</span
+                            >XGBoost</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >AWS Spot</span
+                            >Threshold Tuning</span
                         >
                     </div>
                 </div>
 
-                <!-- Week 3 -->
+                <!-- Phase 3 -->
                 <div class="relative pl-8 border-l border-white/10">
                     <div
                         class="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-accent-primary"
                     >
                     </div>
                     <h3 class="font-display text-xl font-bold mb-2">
-                        Week 3: Deploy & Monitor
+                        Phase 3: Three-Way Triage
                     </h3>
                     <p class="text-text-secondary text-sm leading-relaxed mb-4">
-                        Containerized inference service (ONNX runtime). Deployed
-                        to K8s with a shadow mode to validate against legacy
-                        system.
+                        Implemented Pass/Defer/Reject decision policy. Optimized
+                        thresholds for expected business loss, not accuracy.
                     </p>
                     <div class="flex gap-2">
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >Docker</span
+                            >Cost Matrix</span
                         >
                         <span
                             class="text-[10px] font-mono px-2 py-1 bg-white/5 rounded border border-white/10 text-text-secondary"
-                            >FastAPI</span
+                            >Calibration</span
                         >
                     </div>
                 </div>
 
-                <!-- Week 4 -->
+                <!-- Phase 4 -->
                 <div class="relative pl-8 border-l-2 border-accent-primary/50">
                     <div
                         class="absolute left-[-6px] top-0 w-3 h-3 rounded-full bg-accent-primary shadow-[0_0_10px_rgba(var(--color-accent-primary),0.5)]"
                     >
                     </div>
                     <h3 class="font-display text-xl font-bold mb-2 text-white">
-                        Week 4: Iteration & Impact
+                        Phase 4: Validation & Impact
                     </h3>
                     <p class="text-text-secondary text-sm leading-relaxed mb-4">
-                        Full rollout. Enabled team to run 15 experiments/day.
-                        Improved core metric by 12% through rapid hyperparam
-                        tuning.
+                        Validated on held-out test set. System achieves 98.7%
+                        recall while automating 67% of decisions—68% reduction
+                        in manual review.
                     </p>
                     <div
                         class="p-3 bg-accent-primary/10 border border-accent-primary/20 rounded-lg"
                     >
                         <p class="text-sm font-semibold text-accent-primary">
-                            Outcome: Time-to-learning reduced from 2 days to 3
-                            hours.
+                            Outcome: 32% reduction in high-cost false negatives
+                            with bounded precision trade-offs.
                         </p>
                     </div>
                 </div>
@@ -146,10 +146,10 @@ import Section from "./Section.astro";
                             >
                             <span class="text-text-secondary">
                                 <strong class="text-white"
-                                    >Postgres over Vector DB:</strong
+                                    >Threshold Policy over Model Complexity:</strong
                                 >
-                                Chose pgvector for simplicity. Dedicated vector DB
-                                added unnecessary ops overhead for &lt;1M vectors.
+                                Decision policy dominates representation under asymmetric
+                                loss. Tuning thresholds beat adding model layers.
                             </span>
                         </li>
                         <li class="flex items-start gap-3 text-sm">
@@ -158,10 +158,23 @@ import Section from "./Section.astro";
                             >
                             <span class="text-text-secondary">
                                 <strong class="text-white"
-                                    >Batch over Streaming:</strong
+                                    >Cascade over Single Model:</strong
                                 >
-                                Implemented daily batch training instead of online
-                                learning to ensure stability and reproducibility first.
+                                Two-stage inference lets fast gatekeeper handle easy
+                                cases, reserving expensive specialist for uncertain
+                                inputs.
+                            </span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <span class="text-accent-secondary shrink-0"
+                                >vs</span
+                            >
+                            <span class="text-text-secondary">
+                                <strong class="text-white"
+                                    >Defer over Force Decision:</strong
+                                >
+                                Three-way triage (Pass/Defer/Reject) acknowledges
+                                uncertainty rather than forcing bad predictions.
                             </span>
                         </li>
                     </ul>
@@ -174,16 +187,21 @@ import Section from "./Section.astro";
                         What I Cut (Scope Discipline)
                     </h3>
                     <p class="text-sm text-text-secondary leading-relaxed mb-4">
-                        "Perfect is the enemy of shipped."
+                        "Optimize for decision quality, not model
+                        sophistication."
                     </p>
                     <ul
                         class="list-disc list-inside space-y-2 text-sm text-text-secondary"
                     >
-                        <li>No fancy UI (CLI only for v1)</li>
-                        <li>No automated retraining (manual trigger)</li>
                         <li>
-                            Single-node training only (no distributed
-                            complexity)
+                            No deep learning (XGBoost sufficient for tabular)
+                        </li>
+                        <li>
+                            No real-time inference (batch decisions OK for
+                            credit)
+                        </li>
+                        <li>
+                            No automated retraining (concept drift v2 roadmap)
                         </li>
                     </ul>
                 </div>

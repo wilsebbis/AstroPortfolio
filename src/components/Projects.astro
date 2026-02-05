@@ -47,51 +47,52 @@ const projects = [
         github: "https://github.com/wilsebbis/llm-extraction-pipeline",
         link: "/projects/llm-extraction-pipeline",
     },
-    {
-        title: "Real-time Style Transfer",
-        description:
-            "Ported VGG-19 to NCNN for Android, applying INT8 quantization to achieve 24fps on Snapdragon 855 (vs 5fps baseline) with <2% perceptual loss (LPIPS).",
-        outcome:
-            "Shipped to 50k+ active users; enabled real-time interaction on mid-range hardware.",
-        proof: [
-            { label: "Latency", value: "41ms @ 512px" },
-            { label: "Model Size", value: "14MB (INT8)" },
-            { label: "Scale", value: "50k MAU" },
-        ],
-        tags: ["PyTorch", "TensorRT", "C++", "NCNN"],
-        github: "#",
-        link: "/projects/style-transfer",
-    },
-    {
-        title: "RL Multi-Agent Trading",
-        description:
-            "Orchestrated 3 competitive PPO agents sharing an observation space. Modeled 5bps transaction costs & slippage to prevent overfitting to noise.",
-        outcome:
-            "Achieved 2.1 Sharpe Ratio (vs 0.8 baseline) in walk-forward testing spanning 2018-2022.",
-        proof: [
-            { label: "Sharpe", value: "2.1 vs 0.8" },
-            { label: "Latency", value: "12ms exec" },
-            { label: "Method", value: "Walk-forward" },
-        ],
-        tags: ["Ray Rllib", "Python", "VectorBT", "Redis"],
-        github: "#",
-        link: "/projects/rl-trading",
-    },
-    {
-        title: "Medical Semantic Segmentation",
-        description:
-            "Implemented Monte Carlo Dropout U-Net to quantify uncertainty, filtering high-confidence false positives. Validated with strict patient-level splits.",
-        outcome:
-            "Reduced false positives by 15% at fixed sensitivity (0.92 Dice) compared to vanilla U-Net baseline.",
-        proof: [
-            { label: "Dice", value: "0.92 (Test)" },
-            { label: "FP/Scan", value: "1.2 vs 4.0" },
-            { label: "Inference", value: "150ms/slice" },
-        ],
-        tags: ["TensorFlow", "Keras", "NumPy", "OpenCV"],
-        github: "#",
-        link: "/projects/medical-segmentation",
-    },
+    // COMMENTED OUT: Projects not yet built
+    // {
+    //     title: "Real-time Style Transfer",
+    //     description:
+    //         "Ported VGG-19 to NCNN for Android, applying INT8 quantization to achieve 24fps on Snapdragon 855 (vs 5fps baseline) with <2% perceptual loss (LPIPS).",
+    //     outcome:
+    //         "Shipped to 50k+ active users; enabled real-time interaction on mid-range hardware.",
+    //     proof: [
+    //         { label: "Latency", value: "41ms @ 512px" },
+    //         { label: "Model Size", value: "14MB (INT8)" },
+    //         { label: "Scale", value: "50k MAU" },
+    //     ],
+    //     tags: ["PyTorch", "TensorRT", "C++", "NCNN"],
+    //     github: "#",
+    //     link: "/projects/style-transfer",
+    // },
+    // {
+    //     title: "RL Multi-Agent Trading",
+    //     description:
+    //         "Orchestrated 3 competitive PPO agents sharing an observation space. Modeled 5bps transaction costs & slippage to prevent overfitting to noise.",
+    //     outcome:
+    //         "Achieved 2.1 Sharpe Ratio (vs 0.8 baseline) in walk-forward testing spanning 2018-2022.",
+    //     proof: [
+    //         { label: "Sharpe", value: "2.1 vs 0.8" },
+    //         { label: "Latency", value: "12ms exec" },
+    //         { label: "Method", value: "Walk-forward" },
+    //     ],
+    //     tags: ["Ray Rllib", "Python", "VectorBT", "Redis"],
+    //     github: "#",
+    //     link: "/projects/rl-trading",
+    // },
+    // {
+    //     title: "Medical Semantic Segmentation",
+    //     description:
+    //         "Implemented Monte Carlo Dropout U-Net to quantify uncertainty, filtering high-confidence false positives. Validated with strict patient-level splits.",
+    //     outcome:
+    //         "Reduced false positives by 15% at fixed sensitivity (0.92 Dice) compared to vanilla U-Net baseline.",
+    //     proof: [
+    //         { label: "Dice", value: "0.92 (Test)" },
+    //         { label: "FP/Scan", value: "1.2 vs 4.0" },
+    //         { label: "Inference", value: "150ms/slice" },
+    //     ],
+    //     tags: ["TensorFlow", "Keras", "NumPy", "OpenCV"],
+    //     github: "#",
+    //     link: "/projects/medical-segmentation",
+    // },
     {
         title: "Distributed Rate Limiter",
         description:
