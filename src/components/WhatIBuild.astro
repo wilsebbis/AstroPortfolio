@@ -85,7 +85,7 @@ import Section from "./Section.astro";
 
         <!-- Dynamic Headline (fixed height to prevent layout shift) -->
         <div
-            class="h-[380px] sm:h-[320px] md:h-[320px] lg:h-[280px] overflow-hidden"
+            class="h-[460px] sm:h-[350px] md:h-[320px] lg:h-[280px] overflow-hidden"
         >
             <p
                 class="font-display text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold tracking-tight leading-loose md:leading-relaxed"
@@ -156,6 +156,14 @@ import Section from "./Section.astro";
             product: "a distributed sliding-window limiter",
             proof: "maintained 0.27ms p99 added latency at 10k QPS with no over-admissions under adversarial single-key flood",
             stack: "Go, Redis (Lua), Ristretto, Prometheus, and vegeta",
+        },
+        {
+            outcome:
+                "an offline-estimated 10.4% reduction in expected chargeback loss (95% CI: 9.7–11.1%)",
+            who: "payment transactions",
+            product: "a cost-sensitive fraud risk scoring pipeline",
+            proof: "enforced FPR ≤ 2% via constrained threshold optimization and achieved 57.0% precision at a 3.76% decline rate",
+            stack: "XGBoost, Python, and Snowflake",
         },
         // === COMMENTED OUT: Projects not yet built ===
         // {
